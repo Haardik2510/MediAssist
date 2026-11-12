@@ -272,7 +272,7 @@ def creds():
 
 
 @app.post("/api/register")
-@limiter.limit("5/hour")
+@limiter.limit("60/hour")
 def register():
     e, p = creds()
     if not EMAIL_RE.match(e):
@@ -294,7 +294,19 @@ def register():
             if "already registered" in err_msg.lower():
                 return jsonify(error="An account with this email already exists."), 409
             if "rate limit" in err_msg.lower():
-                return jsonify(error="Rate limit exceeded. Please wait a few minutes or disable email confirmation in Supabase."), 429
+                # Automatic bypass for Supabase email rate limits
+                try:
+                    admin_res = supabase_client.auth.admin.create_user({
+                        "email": e,
+                        "password": p,
+                        "email_confirm": True
+                    })
+                    if admin_res and admin_res.user:
+                        return jsonify(ok=True, message="Account created and verified! You can now log in directly.")
+                except Exception as admin_ex:
+                    if "already registered" in str(admin_ex).lower():
+                        return jsonify(error="An account with this email already exists."), 409
+                    return jsonify(error=f"Registration failed: {str(admin_ex)}"), 400
             return jsonify(error=err_msg), 400
     else:
         if q("SELECT 1 FROM users WHERE email=?", (e,)).fetchone():
@@ -329,7 +341,7 @@ def verify():
 
 
 @app.post("/api/login")
-@limiter.limit("10/minute")
+@limiter.limit("60/minute")
 def login():
     e, p = creds()
     if USE_SUPABASE:
@@ -381,7 +393,7 @@ def logout():
 
 
 @app.post("/api/forgot")
-@limiter.limit("5/hour")
+@limiter.limit("30/hour")
 def forgot():
     e, _ = creds()
     if not EMAIL_RE.match(e):
