@@ -152,18 +152,18 @@ class SupabaseDB:
     # -- Users --
     def get_user_by_email(self, email):
         r = self.sb.table("users").select("*").eq("email", email).maybe_single().execute()
-        return dict(r.data) if r.data else None
+        return dict(r.data) if (r and getattr(r, "data", None)) else None
 
     def get_user_by_id(self, uid):
         r = self.sb.table("users").select("*").eq("id", uid).maybe_single().execute()
-        return dict(r.data) if r.data else None
+        return dict(r.data) if (r and getattr(r, "data", None)) else None
 
     def create_user(self, email, pw_hash):
         r = self.sb.table("users").insert({
             "email": email, "pw": pw_hash, "verified": 0, "onboarded": 0,
             "created": datetime.utcnow().isoformat()
         }).execute()
-        return r.data[0]["id"] if r.data else None
+        return r.data[0]["id"] if (r and getattr(r, "data", None)) else None
 
     def verify_user(self, uid):
         self.sb.table("users").update({"verified": 1}).eq("id", uid).execute()
@@ -187,10 +187,11 @@ class SupabaseDB:
 
     def take_token(self, tok, kind):
         r = self.sb.table("tokens").select("*").eq("token", tok).eq("kind", kind).maybe_single().execute()
-        if not r.data or r.data["expires"] < datetime.utcnow().isoformat():
+        if not r or not getattr(r, "data", None) or r.data.get("expires", "") < datetime.utcnow().isoformat():
             return None
+        uid = r.data["user_id"]
         self.sb.table("tokens").delete().eq("token", tok).execute()
-        return r.data["user_id"]
+        return uid
 
     # -- Prescriptions --
     def save_prescription(self, uid, raw_text):
@@ -738,6 +739,14 @@ def nf(_):
 @app.errorhandler(429)
 def rl(_):
     return jsonify(error="Too many attempts. Wait a few minutes and try again."), 429
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    traceback.print_exc()
+    if request.path.startswith("/api/"):
+        code = getattr(e, "code", 500)
+        return jsonify(error=getattr(e, "description", None) or str(e) or "Internal server error"), code
+    return send_from_directory("static", "404.html"), 500
 
 @app.get("/config.json")
 def cfg():
