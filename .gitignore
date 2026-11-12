@@ -1,0 +1,19 @@
+# Environment & Secrets
+.env
+.env.local
+
+# Databases & logs
+*.db
+*.sqlite3
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Temp
+*.tmp
+*~
