@@ -38,17 +38,22 @@ if os.getenv("SENTRY_DSN"):
     import sentry_sdk; sentry_sdk.init(dsn=os.environ["SENTRY_DSN"])
 
 # ─── Supabase client ─────────────────────────────────────────────────────────
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")   # service-role or anon key
-USE_SUPABASE = bool(SUPABASE_URL and SUPABASE_KEY)
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip().strip('"').strip("'")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "").strip().strip('"').strip("'")
+USE_SUPABASE = bool(SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL.startswith("http"))
 
 supabase_client = None
 if USE_SUPABASE:
-    from supabase import create_client
-    supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    print("[MediAssist] Supabase connected ✓")
+    try:
+        from supabase import create_client
+        supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("[MediAssist] Supabase connected")
+    except Exception as _e:
+        print(f"[MediAssist] Supabase connection failed ({_e}) - falling back to SQLite")
+        USE_SUPABASE = False
+        supabase_client = None
 else:
-    print("[MediAssist] Supabase not configured – falling back to SQLite")
+    print("[MediAssist] Supabase not configured or invalid URL - falling back to SQLite")
 
 # ─── Optional NLP libraries ──────────────────────────────────────────────────
 try:
