@@ -5,9 +5,19 @@ const api=async(p,o={})=>{const h={'X-Requested-With':'fetch'};let b=o.body;if(b
 // analytics + error tracking (client): privacy-friendly, only if configured
 fetch('/config.json').then(r=>r.ok?r.json():{}).then(c=>{if(c.plausible){const s=document.createElement('script');s.defer=1;s.dataset.domain=c.plausible;s.src='https://plausible.io/js/script.js';document.head.append(s)}}).catch(()=>{});
 addEventListener('error',e=>navigator.sendBeacon&&navigator.sendBeacon('/api/log',JSON.stringify({m:e.message})));
-// mouse effects: spotlight glow + per-card hover light + magnetic buttons
-addEventListener('mousemove',e=>{const g=$('#glow');g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';
- const c=e.target.closest?.('.card');if(c){const r=c.getBoundingClientRect();c.style.setProperty('--x',e.clientX-r.left+'px');c.style.setProperty('--y',e.clientY-r.top+'px')}});
+// mouse effects: spotlight glow + per-card hover light (60fps throttled)
+let _mTick=false;
+addEventListener('mousemove',e=>{
+ if(!_mTick){
+  requestAnimationFrame(()=>{
+   const g=$('#glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px'}
+   const c=e.target.closest?.('.card');
+   if(c){const r=c.getBoundingClientRect();c.style.setProperty('--x',e.clientX-r.left+'px');c.style.setProperty('--y',e.clientY-r.top+'px')}
+   _mTick=false;
+  });
+  _mTick=true;
+ }
+});
 addEventListener('scroll',()=>{$('#bar').style.width=scrollY/(document.body.scrollHeight-innerHeight)*100+'%'});
 function motion(){ // scroll-triggered Anime.js reveals + text split
  const h=$('.hero h1');if(h&&!h.dataset.s){h.dataset.s=1;h.innerHTML=h.textContent.split(' ').map(w=>`<span class=w>${w}</span>`).join(' ');anime({targets:'.hero .w',opacity:[0,1],translateY:[30,0],delay:anime.stagger(90),easing:'easeOutExpo',duration:900});anime({targets:'.hero p,.hero .btn',opacity:[0,1],translateY:[20,0],delay:anime.stagger(120,{start:500})})}
@@ -279,11 +289,64 @@ const routes={
  terms:()=>doc('Terms of Service',['Assistive tool','MediAssist helps you organise medicines. It is not medical advice and does not replace a doctor or pharmacist.','Accuracy','OCR can be wrong. You must confirm every medicine and dose before saving.','Use','Do not misuse the service. We may suspend abusive accounts.','Liability','The service is provided as is. Have these terms reviewed by a lawyer before launch.'])};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const doc=(t,p)=>{app.innerHTML=`<section class=doc><h1>${t}</h1>${p.map((x,i)=>i%2?`<p>${x}</p>`:`<h2>${x}</h2>`).join('')}</section>`};
-async function scan(e){const f=e.target.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);$('#serr').textContent='';$('#draft').innerHTML='<span class=spin></span> Reading prescription...';
- try{const d=await api('/scan',{body:fd});if(!d.medicines.length){$('#draft').innerHTML='';$('#serr').textContent='No medicines detected. Try a clearer, well-lit photo.';return}
-  $('#draft').innerHTML=`<p>Review and correct before saving:</p>${d.medicines.map((x,i)=>`<div class=grid style="margin:8px 0"><input value="${esc(x.name)}" data-i=${i} data-k=name><input value="${esc(x.strength)}" data-i=${i} data-k=strength placeholder=strength><input value="${x.times.join(',')}" data-i=${i} data-k=times><input type=number min=1 max=365 value=${x.days} data-i=${i} data-k=days></div>`).join('')}<button class=btn id=save>Confirm and save</button>`;
-  $('#save').onclick=async()=>{const meds=d.medicines.map((x,i)=>{const g=k=>$(`[data-i="${i}"][data-k=${k}]`).value;return{...x,name:g('name'),strength:g('strength'),times:g('times').split(',').map(s=>s.trim()),days:+g('days')}});
-   try{await api('/prescriptions',{body:{raw:d.raw,medicines:meds}});routes.dash()}catch(x){$('#serr').textContent=x.message}}}catch(x){$('#draft').innerHTML='';$('#serr').textContent=x.message}}
+async function compressImage(file, maxDim = 1200) {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) return resolve(file);
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w <= maxDim && h <= maxDim) return resolve(file);
+        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => resolve(blob || file), 'image/jpeg', 0.88);
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function scan(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  $('#serr').textContent = '';
+  $('#draft').innerHTML = '<span class=spin></span> Preparing & reading prescription (high-speed OCR)...';
+  try {
+    const compressed = await compressImage(f, 1200);
+    const fd = new FormData();
+    fd.append('image', compressed, 'prescription.jpg');
+    const d = await api('/scan', { body: fd });
+    if(!d.medicines || !d.medicines.length){
+      $('#draft').innerHTML = '';
+      $('#serr').textContent = 'No medicines detected. Try a clearer photo or confirm doctor handwriting.';
+      return;
+    }
+    $('#draft').innerHTML = `<p><b>Prescription read successfully:</b> Review and correct before saving:</p>${d.medicines.map((x,i)=>`<div class=grid style="margin:8px 0"><input value="${esc(x.name)}" data-i=${i} data-k=name placeholder="Medicine name"><input value="${esc(x.strength)}" data-i=${i} data-k=strength placeholder="Strength (e.g. 500mg)"><input value="${x.times.join(',')}" data-i=${i} data-k=times placeholder="Times (08:00, 20:00)"><input type=number min=1 max=365 value=${x.days} data-i=${i} data-k=days placeholder="Days"></div>`).join('')}<button class=btn id=save>Confirm and save</button>`;
+    $('#save').onclick = async () => {
+      const meds = d.medicines.map((x,i)=>{
+        const g = k => $(`[data-i="${i}"][data-k=${k}]`).value;
+        return { ...x, name: g('name'), strength: g('strength'), times: g('times').split(',').map(s=>s.trim()), days: +g('days') };
+      });
+      try {
+        await api('/prescriptions', { body: { raw: d.raw, medicines: meds } });
+        routes.dash();
+      } catch(x) {
+        $('#serr').textContent = x.message;
+      }
+    };
+  } catch(x) {
+    $('#draft').innerHTML = '';
+    $('#serr').textContent = x.message;
+  }
+}
 let _mp = null;
 
 const gmapsBtn = (q, label) => {
@@ -329,8 +392,7 @@ async function renderMapWithPharmacies(lat, lon, locationName){
         data.elements.forEach(n => {
           if(_mp){
             const name = n.tags?.name || 'Medical Store / Pharmacy';
-            const street = n.tags?.['addr:street'] || n.tags?.['addr:full'] || '';
-            L.marker([n.lat, n.lon]).addTo(_mp).bindPopup(`<b>${esc(name)}</b>${street ? '<br>' + esc(street) : ''}`);
+            L.marker([n.lat, n.lon]).addTo(_mp).bindPopup(`<b>${esc(name)}</b>`);
           }
         });
         found = data.elements.length;
