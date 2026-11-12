@@ -71,7 +71,7 @@ except Exception:
 
 # ─── Flask setup ──────────────────────────────────────────────────────────────
 app = Flask(__name__, static_folder="static", static_url_path="")
-app.secret_key = os.environ["SECRET_KEY"]
+app.secret_key = os.getenv("SECRET_KEY") or os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
