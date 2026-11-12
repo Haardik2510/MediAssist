@@ -19,6 +19,8 @@ if os.path.isfile(_local_tess):
 else:
     for _p in [
         os.getenv("TESSERACT_CMD", ""),
+        "/usr/bin/tesseract",
+        "/usr/local/bin/tesseract",
         r"C:\Program Files\Tesseract-OCR\tesseract.exe",
         r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
         os.path.expanduser(r"~\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"),

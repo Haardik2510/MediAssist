@@ -1,0 +1,6 @@
+.git
+.venv
+__pycache__
+*.pyc
+mediassist.db
+tesseract/tesseract.exe
