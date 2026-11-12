@@ -22,3 +22,4 @@ ENV PORT=5000
 EXPOSE 5000
 
 CMD ["sh", "-c", "gunicorn -b 0.0.0.0:${PORT:-5000} --workers 1 --timeout 120 app:app"]
+

@@ -554,31 +554,35 @@ def fuzzy_match_medicine(name):
 
 
 def preprocess_image(img_bytes):
-    """Advanced image preprocessing for better OCR results."""
+    """Advanced high-speed image preprocessing for accurate OCR results."""
     # Decode image
     img = cv2.imdecode(np.frombuffer(img_bytes, np.uint8), cv2.IMREAD_GRAYSCALE)
     if img is None:
         return None
 
-    # Resize if too small (improves OCR on small images)
+    # Normalize dimensions: cap max size at 1600px for speed, floor at 1000px for clarity
     h, w = img.shape
-    if max(h, w) < 1000:
-        scale = 1500 / max(h, w)
+    max_dim = max(h, w)
+    if max_dim > 1600:
+        scale = 1600.0 / max_dim
+        img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+    elif max_dim < 1000:
+        scale = 1500.0 / max_dim
         img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
 
-    # Denoise
-    img = cv2.fastNlMeansDenoising(img, None, 10, 7, 21)
+    # Fast Gaussian noise reduction (instantaneous vs slow non-local means)
+    blurred = cv2.GaussianBlur(img, (3, 3), 0)
 
     # Increase contrast with CLAHE
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    img = clahe.apply(img)
+    img_contrasted = clahe.apply(blurred)
 
-    # Adaptive thresholding for uneven lighting
-    img_otsu = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    # 1. Otsu thresholding
+    img_otsu = cv2.threshold(img_contrasted, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-    # Also try adaptive thresholding
+    # 2. Adaptive thresholding
     img_adaptive = cv2.adaptiveThreshold(
-        img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 8
+        img_contrasted, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 8
     )
 
     return img_otsu, img_adaptive
@@ -673,7 +677,7 @@ def parse(text):
 
 @app.post("/api/scan")
 @auth
-@limiter.limit("20/hour")
+@limiter.limit("60/hour")
 def scan():
     f = request.files.get("image")
     if not f:
@@ -686,24 +690,46 @@ def scan():
 
     img_otsu, img_adaptive = result
 
-    # Try OCR with both preprocessing styles and PSM modes, picking the highest medicine yield
-    candidates = []
-    for img in (img_otsu, img_adaptive):
-        for cfg in ("", "--psm 6"):
-            try:
-                raw_cand = pytesseract.image_to_string(img, config=cfg)
-                meds_cand = parse(raw_cand)
-                candidates.append((len(meds_cand), raw_cand, meds_cand))
-            except Exception:
-                pass
+    # Fast first pass (Otsu thresholding, ~0.3s)
+    raw = ""
+    meds = []
+    try:
+        raw = pytesseract.image_to_string(img_otsu)
+        meds = parse(raw)
+    except Exception:
+        pass
 
-    if not candidates:
-        return jsonify(error="OCR engine unavailable on the server. Install Tesseract."), 503
+    # Early exit if 3+ medicines found (<1 second total latency)
+    if len(meds) >= 3:
+        return jsonify(raw=raw, medicines=meds)
 
-    candidates.sort(key=lambda c: c[0], reverse=True)
-    raw, medicines = candidates[0][1], candidates[0][2]
+    # Second pass: try --psm 6 on Otsu (great for column layouts)
+    try:
+        raw_psm = pytesseract.image_to_string(img_otsu, config="--psm 6")
+        meds_psm = parse(raw_psm)
+        if len(meds_psm) > len(meds):
+            raw, meds = raw_psm, meds_psm
+    except Exception:
+        pass
 
-    return jsonify(raw=raw, medicines=medicines)
+    # If still few medicines found, try adaptive threshold
+    if len(meds) < 2:
+        try:
+            raw_ad = pytesseract.image_to_string(img_adaptive)
+            meds_ad = parse(raw_ad)
+            if len(meds_ad) > len(meds):
+                raw, meds = raw_ad, meds_ad
+        except Exception:
+            pass
+
+    # If still nothing, verify whether tesseract is available
+    if not raw and not meds:
+        try:
+            pytesseract.get_tesseract_version()
+        except Exception:
+            return jsonify(error="OCR engine unavailable on the server. Install Tesseract."), 503
+
+    return jsonify(raw=raw, medicines=meds)
 
 
 @app.post("/api/prescriptions")
@@ -825,6 +851,10 @@ def cfg():
 def clientlog():
     app.logger.error("client error: %s", request.get_data(as_text=True)[:300])
     return "", 204
+
+@app.get("/favicon.ico")
+def favicon():
+    return send_from_directory("static", "favicon.ico", mimetype="image/vnd.microsoft.icon")
 
 @app.get("/")
 def home():
