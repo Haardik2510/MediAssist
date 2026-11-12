@@ -28,11 +28,18 @@ const routes={
  '':()=>{app.innerHTML=landing();motion();$('[data-sl="-1"]').onclick=()=>$('#sl').scrollBy({left:-340,behavior:'smooth'});$('[data-sl="1"]').onclick=()=>$('#sl').scrollBy({left:340,behavior:'smooth'});
   const s=$('#sl');let dn=0,sx=0;s.onmousedown=e=>{dn=1;sx=e.pageX+s.scrollLeft};addEventListener('mouseup',()=>dn=0);s.onmousemove=e=>{if(dn)s.scrollLeft=sx-e.pageX}},
  signup:()=>{app.innerHTML=form('Create account',[['email','Email','email'],['password','Password (8+ characters)','password']],'Sign up','<p>Have an account? <a href=#/login>Log in</a></p>');bind(async d=>{const res=await api('/register',{body:d});$('#f').innerHTML=`<p class=ok>${res.message||'Check your inbox for a verification link, then log in.'}</p>`})},
- login:()=>{app.innerHTML=form('Log in',[['email','Email','email'],['password','Password','password']],'Log in','<p><a href=#/forgot>Forgot password?</a> | <a href=#/signup>Create account</a></p>');bind(async d=>{await api('/login',{body:d});await boot();location.hash='#/dash'})},
+ login:()=>{app.innerHTML=form('Log in',[['email','Email','email'],['password','Password','password']],'Log in','<p><a href=#/forgot>Forgot password?</a> | <a href=#/signup>Create account</a></p>');bind(async d=>{await api('/login',{body:d});localStorage.setItem('ma_auth','1');await boot();location.hash='#/dash'})},
  forgot:()=>{app.innerHTML=form('Reset password',[['email','Email','email']],'Send link');bind(async d=>{await api('/forgot',{body:d});$('#f').innerHTML='<p class=ok>If that email has an account, a reset link is on its way.</p>'})},
  reset:t=>{app.innerHTML=form('New password',[['password','New password','password']],'Save password');bind(async d=>{await api('/reset',{body:{...d,token:t}});location.hash='#/login'})},
  verify:async t=>{app.innerHTML='<section><span class=spin></span> Verifying...</section>';try{await api('/verify',{body:{token:t}});app.innerHTML='<section><h1>Email verified</h1><a class=btn href=#/login>Log in</a></section>'}catch(e){app.innerHTML=`<section><h1>Verification failed</h1><p class=err>${e.message}</p></section>`}},
- dash:async()=>{if(!user)return location.hash='#/login';app.innerHTML='<section><span class=spin></span> Loading...</section>';let m=[];try{m=await api('/medicines')}catch(e){app.innerHTML=`<section class=err>${e.message}</section>`;return}
+ dash:async()=>{
+  if(!user){
+    app.innerHTML='<section><span class=spin></span> Checking session...</section>';
+    try{user=(await api('/me')).user}catch{user=null}
+    nav();
+  }
+  if(!user)return location.hash='#/login';
+  app.innerHTML='<section><span class=spin></span> Loading...</section>';let m=[];try{m=await api('/medicines')}catch(e){app.innerHTML=`<section class=err>${e.message}</section>`;return}
   const todayStr=new Date().toISOString().slice(0,10);
   app.innerHTML=`<section><h1>Your medicines</h1>
   <div class=card><h3>Scan a prescription</h3><input type=file id=img accept="image/*" capture=environment><div class=err id=serr></div><div id=draft></div></div>
@@ -40,7 +47,7 @@ const routes={
   <h2>AI Consumption & Timing Summary</h2>
   <div class=card id=ai-summary-box>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span class="badge" style="background:#0284c7;color:#fff">AI Clinical Guidance</span>
+      <span class="badge" id=ai-badge style="background:#0284c7;color:#fff">AI Clinical Guidance</span>
       <button class="btn ghost sm" id=btn-reload-summary>Refresh Summary</button>
     </div>
     <div id=ai-summary-body><span class=spin></span> Analyzing your medications and consumption timing...</div>
@@ -58,7 +65,26 @@ const routes={
   </div>
 
   <h2>Schedule</h2>
-  ${m.length?`<div class=card style="overflow-x:auto"><table><tr><th>Medicine<th>Frequency<th>Times<th>Days<th>Buy Online<th>Action</tr>${m.map(x=>`<tr data-mid="${x.id}"><td><b>${esc(x.name)}</b> ${esc(x.strength)}<td>${esc(x.freq)}<td>${x.times.join(', ')}<td>${x.days}d<td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a> · <a href="https://www.netmeds.com/catalogsearch/result/${encodeURIComponent(x.name)}/all" target=_blank rel="noopener">Netmeds</a><td><button class="btn danger sm del-med" data-id="${x.id}">Delete</button></tr>`).join('')}</table></div>`:'<div class=empty>No medicines yet. Scan your first prescription above.</div>'}
+  ${m.length?`
+  <div id=batch-bar style="display:none;margin-bottom:12px;padding:10px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <span id=batch-count style="font-weight:600">0 medicines selected</span>
+    <button class="btn danger sm" id=batch-del-btn>Delete Selected Medicines</button>
+  </div>
+  <div class=card style="overflow-x:auto"><table>
+    <tr>
+      <th style="width:36px;text-align:center"><input type=checkbox id=select-all title="Select all medicines"></th>
+      <th>Medicine</th><th>Frequency</th><th>Times</th><th>Days</th><th>Buy Online</th><th>Action</th>
+    </tr>
+    ${m.map(x=>`<tr data-mid="${x.id}">
+      <td style="text-align:center"><input type=checkbox class=med-cb data-id="${x.id}"></td>
+      <td><b>${esc(x.name)}</b> ${esc(x.strength)}</td>
+      <td>${esc(x.freq)}</td>
+      <td>${x.times.join(', ')}</td>
+      <td>${x.days}d</td>
+      <td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a> · <a href="https://www.netmeds.com/catalogsearch/result/${encodeURIComponent(x.name)}/all" target=_blank rel="noopener">Netmeds</a></td>
+      <td><button class="btn danger sm del-med" data-id="${x.id}">Delete</button></td>
+    </tr>`).join('')}
+  </table></div>`:'<div class=empty>No medicines yet. Scan your first prescription above.</div>'}
 
   <h2>Nearby pharmacies</h2>
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
@@ -78,6 +104,55 @@ const routes={
   if(sBtn){
     sBtn.onclick=()=>{ searchArea($('#area').value); };
     $('#area').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); searchArea($('#area').value); } };
+  }
+
+  const updateBatchState=()=>{
+    const cbs=Array.from(document.querySelectorAll('.med-cb'));
+    const checked=cbs.filter(c=>c.checked);
+    const bBar=$('#batch-bar');
+    const bCount=$('#batch-count');
+    const selAll=$('#select-all');
+    if(selAll)selAll.checked=cbs.length>0&&checked.length===cbs.length;
+    if(bBar){
+      if(checked.length>0){
+        bBar.style.display='flex';
+        bCount.textContent=checked.length+' medicine'+(checked.length>1?'s':'')+' selected';
+      }else{
+        bBar.style.display='none';
+      }
+    }
+  };
+
+  const selAll=$('#select-all');
+  if(selAll){
+    selAll.onchange=()=>{
+      document.querySelectorAll('.med-cb').forEach(c=>c.checked=selAll.checked);
+      updateBatchState();
+    };
+  }
+
+  document.querySelectorAll('.med-cb').forEach(c=>{
+    c.onchange=updateBatchState;
+  });
+
+  const bDelBtn=$('#batch-del-btn');
+  if(bDelBtn){
+    bDelBtn.onclick=async()=>{
+      const selected=Array.from(document.querySelectorAll('.med-cb:checked')).map(c=>+c.getAttribute('data-id'));
+      if(!selected.length)return;
+      if(confirm('Delete '+selected.length+' selected medicine'+(selected.length>1?'s':'')+' and all upcoming doses?')){
+        bDelBtn.disabled=true;
+        bDelBtn.textContent='Deleting...';
+        try{
+          await api('/medicines/batch-delete',{body:{ids:selected}});
+          routes.dash();
+        }catch(err){
+          alert(err.message||'Failed to delete selected medicines.');
+          bDelBtn.disabled=false;
+          bDelBtn.textContent='Delete Selected Medicines';
+        }
+      }
+    };
   }
 
   document.querySelectorAll('.del-med').forEach(btn=>{
@@ -161,6 +236,11 @@ const routes={
       if(!data.total_medications){
         box.innerHTML='<p class="empty" style="padding:16px">No active medicines scheduled. Scan or enter a prescription to see smart consumption instructions.</p>';
         return;
+      }
+      const badge=$('#ai-badge');
+      if(badge&&data.source&&data.source.includes('Gemini')){
+        badge.textContent='Google Gemini 1.5 Flash (Live AI)';
+        badge.style.background='#10b981';
       }
       let html=`<p style="font-size:15px;line-height:1.6;margin-bottom:14px"><b>Regimen Overview:</b> ${esc(data.summary)}</p>`;
       const slots=data.slots||{};
@@ -337,6 +417,6 @@ function onboard(){const st=['Scan a prescription photo.','Confirm the medicines
  const r=()=>{d.innerHTML=`<div class=card><small>Step ${i+1} of 3</small><h2>${st[i]}</h2><button class=btn id=nx>${i<2?'Next':'Finish'}</button></div>`;$('#nx',d).onclick=async()=>{if(++i>2){await api('/onboarded',{method:'POST',body:{}});d.remove();user.onboarded=1;Notification?.requestPermission?.()}else r()}};r();document.body.append(d)}
 let rt;function remind(){clearInterval(rt);const tick=async()=>{try{for(const x of await api('/reminders/due')){if(Notification.permission==='granted'){new Notification('Time for '+x.name,{body:'Open MediAssist to log this dose.'})}
  if(!$('#r'+x.id)){app.insertAdjacentHTML('afterbegin',`<div class=card id=r${x.id} style="margin:16px 5vw">${esc(x.name)} due ${x.due.slice(11)} <button class=btn data-a=taken>Taken</button> <button class="btn ghost" data-a=snooze>Snooze 10m</button> <button class="btn ghost" data-a=skipped>Skip</button></div>`);$('#r'+x.id).onclick=async e=>{const a=e.target.dataset.a;if(a){await api('/doses/'+x.id,{body:{status:a}});$('#r'+x.id).remove()}}}}}catch{}};tick();rt=setInterval(tick,30000)}
-async function boot(){try{user=(await api('/me')).user}catch{user=null}nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
-async function route(){const[,p,a]=location.hash.split('/');scrollTo(0,0);(routes[p||'']||(()=>app.innerHTML='<section><h1>404</h1><a href=/>Home</a></section>'))(a);nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
+async function boot(){try{user=(await api('/me')).user;if(user)localStorage.setItem('ma_auth','1');else localStorage.removeItem('ma_auth')}catch{user=null}nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
+async function route(){const[,p,a]=location.hash.split('/');scrollTo(0,0);if(!user&&localStorage.getItem('ma_auth')==='1'){try{user=(await api('/me')).user}catch{user=null}}(routes[p||'']||(()=>app.innerHTML='<section><h1>404</h1><a href=/>Home</a></section>'))(a);nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
 addEventListener('hashchange',route);boot().then(route);

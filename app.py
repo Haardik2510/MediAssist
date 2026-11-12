@@ -73,11 +73,14 @@ except Exception:
 
 # ─── Flask setup ──────────────────────────────────────────────────────────────
 app = Flask(__name__, static_folder="static", static_url_path="")
-app.secret_key = os.getenv("SECRET_KEY") or os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
+# Deterministic persistent secret key prevents logout on Gunicorn worker switches or server restarts
+_persistent_secret = "mediassist_persistent_session_key_production_2026_secured_v1"
+app.secret_key = os.getenv("SECRET_KEY") or os.getenv("FLASK_SECRET_KEY") or _persistent_secret
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv("PROD") == "1",
+    SESSION_COOKIE_SECURE=False,
+    PERMANENT_SESSION_LIFETIME=timedelta(days=30),
     MAX_CONTENT_LENGTH=8 * 1024 * 1024,
 )
 limiter = Limiter(get_remote_address, app=app, default_limits=["300/hour"])
@@ -203,6 +206,10 @@ class SupabaseDB:
     def delete_medicine(self, med_id, uid):
         self.sb.table("doses").delete().eq("med_id", med_id).eq("user_id", str(uid)).execute()
         self.sb.table("medicines").delete().eq("id", med_id).eq("user_id", str(uid)).execute()
+
+    def batch_delete_medicines(self, med_ids, uid):
+        self.sb.table("doses").delete().in_("med_id", med_ids).eq("user_id", str(uid)).execute()
+        self.sb.table("medicines").delete().in_("id", med_ids).eq("user_id", str(uid)).execute()
 
     def get_timeline(self, uid, date_str):
         prefix = f"{date_str}%"
@@ -380,6 +387,7 @@ def login():
             if not res or not res.user:
                 return jsonify(error="Incorrect email or password."), 401
             session.clear()
+            session.permanent = True
             uid = str(res.user.id)
             session["uid"] = uid
             session["email"] = res.user.email
@@ -407,7 +415,9 @@ def login():
         if not u["verified"]:
             return jsonify(error="Verify your email first. Check your inbox."), 403
         session.clear()
+        session.permanent = True
         session["uid"] = u["id"]
+        session["email"] = u["email"]
         return jsonify(ok=True)
 
 
@@ -864,6 +874,33 @@ def delete_medicine_route(mid):
     return jsonify(ok=True)
 
 
+@app.post("/api/medicines/batch-delete")
+@auth
+def batch_delete_medicines_route():
+    d = request.get_json(silent=True) or {}
+    ids = d.get("ids") or []
+    if not isinstance(ids, list) or not ids:
+        return jsonify(error="Select at least one medicine to delete."), 400
+
+    u = session["uid"]
+    clean_ids = [int(i) for i in ids if str(i).isdigit()]
+    if not clean_ids:
+        return jsonify(error="Invalid medicine IDs."), 400
+
+    if USE_SUPABASE:
+        try:
+            sdb.batch_delete_medicines(clean_ids, u)
+        except Exception as ex:
+            return jsonify(error=str(ex)), 400
+    else:
+        q_marks = ",".join(["?"] * len(clean_ids))
+        q(f"DELETE FROM doses WHERE med_id IN ({q_marks}) AND user_id=?", (*clean_ids, u))
+        q(f"DELETE FROM medicines WHERE id IN ({q_marks}) AND user_id=?", (*clean_ids, u))
+        _sqlite().commit()
+
+    return jsonify(ok=True, deleted=len(clean_ids))
+
+
 @app.get("/api/timeline")
 @auth
 def timeline_route():
@@ -1002,6 +1039,68 @@ MED_GUIDELINES = {
 }
 
 
+def call_gemini_api(meds_list, api_key):
+    """Call Google Gemini 1.5 Flash for genuine clinical AI regimen descriptions."""
+    import urllib.request, urllib.error
+    med_lines = []
+    for m in meds_list:
+        times = m.get("times", [])
+        if isinstance(times, str):
+            try:
+                times = json.loads(times)
+            except Exception:
+                pass
+        med_lines.append(f"- {m.get('name')} {m.get('strength', '')} | Frequency: {m.get('freq', '')} | Times: {times} | Duration: {m.get('days')} days")
+
+    meds_str = "\n".join(med_lines)
+    prompt = f"""You are a certified clinical pharmacist. A patient is prescribed the following medications:
+{meds_str}
+
+Provide a personalized, patient-friendly, empathetic medication consumption and timing guide.
+Return a valid JSON object matching this exact structure:
+{{
+  "summary": "2-3 sentence overview explaining how to organize these medicines throughout the day, meal pairing, and hydration.",
+  "slots": {{
+    "morning": [
+      {{"name": "Medicine name & strength", "time": "08:00", "hint": "Clear food/intake instruction (e.g. with breakfast or empty stomach)"}}
+    ],
+    "afternoon": [],
+    "evening": [],
+    "night": []
+  }},
+  "guidelines": [
+    {{
+      "medicine": "Medicine name",
+      "timing": "Recommended timing (e.g. Morning 30m before breakfast, Bedtime)",
+      "instructions": "Precise dietary, water, and food intake advice",
+      "note": "Therapeutic purpose and critical precautions (e.g. avoid alcohol, monitor BP)"
+    }}
+  ]
+}}
+Only return the valid JSON object without surrounding markdown."""
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key.strip()}"
+    payload = json.dumps({
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.2,
+            "responseMimeType": "application/json"
+        }
+    }).encode("utf-8")
+
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=12) as response:
+        data = json.loads(response.read().decode("utf-8"))
+        txt = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        if txt.startswith("```"):
+            txt = txt.strip("`").replace("json\n", "", 1).strip()
+        parsed = json.loads(txt)
+        parsed["source"] = "Google Gemini 1.5 Flash (Live AI)"
+        parsed["ai_powered"] = True
+        parsed["total_medications"] = len(meds_list)
+        return parsed
+
+
 @app.get("/api/medicines/summary")
 @auth
 def med_summary():
@@ -1017,8 +1116,18 @@ def med_summary():
         return jsonify(
             summary="No active medicines found in your schedule. Scan or upload a prescription to generate your personalized regimen.",
             slots={},
-            guidelines=[]
+            guidelines=[],
+            source="MediAssist Clinical Intelligence",
+            ai_powered=False
         )
+
+    # If Gemini API key is configured, generate genuine live generative AI description!
+    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if gemini_key:
+        try:
+            return jsonify(call_gemini_api(meds_list, gemini_key))
+        except Exception as gem_ex:
+            print("[MediAssist] Gemini AI API notice:", gem_ex)
 
     slots = {"morning": [], "afternoon": [], "evening": [], "night": []}
     guidelines = []
@@ -1081,7 +1190,9 @@ def med_summary():
         summary=narrative,
         slots=slots,
         guidelines=guidelines,
-        total_medications=len(meds_list)
+        total_medications=len(meds_list),
+        source="MediAssist Clinical Intelligence",
+        ai_powered=False
     )
 
 
