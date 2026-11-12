@@ -143,89 +143,46 @@ def q(sql, a=()):
 
 # ─── Supabase data-access layer ──────────────────────────────────────────────
 class SupabaseDB:
-    """Wrapper that presents the same interface as the SQLite layer
-    but stores everything in Supabase PostgreSQL via the PostgREST API."""
+    """Wrapper that presents the data interface for Prescriptions,
+    Medicines, and Doses in Supabase PostgreSQL."""
 
     def __init__(self, client):
         self.sb = client
 
-    # -- Users --
-    def get_user_by_email(self, email):
-        r = self.sb.table("users").select("*").eq("email", email).maybe_single().execute()
-        return dict(r.data) if (r and getattr(r, "data", None)) else None
-
-    def get_user_by_id(self, uid):
-        r = self.sb.table("users").select("*").eq("id", uid).maybe_single().execute()
-        return dict(r.data) if (r and getattr(r, "data", None)) else None
-
-    def create_user(self, email, pw_hash):
-        r = self.sb.table("users").insert({
-            "email": email, "pw": pw_hash, "verified": 0, "onboarded": 0,
+    # -- Prescriptions --
+    def save_prescription(self, uid, raw_text):
+        r = self.sb.table("prescriptions").insert({
+            "user_id": str(uid), "raw": raw_text[:5000],
             "created": datetime.utcnow().isoformat()
         }).execute()
         return r.data[0]["id"] if (r and getattr(r, "data", None)) else None
 
-    def verify_user(self, uid):
-        self.sb.table("users").update({"verified": 1}).eq("id", uid).execute()
-
-    def set_password(self, uid, pw_hash):
-        self.sb.table("users").update({"pw": pw_hash}).eq("id", uid).execute()
-
-    def set_onboarded(self, uid):
-        self.sb.table("users").update({"onboarded": 1}).eq("id", uid).execute()
-
-    def delete_user(self, uid):
-        for t in ("doses", "medicines", "prescriptions", "tokens"):
-            self.sb.table(t).delete().eq("user_id", uid).execute()
-        self.sb.table("users").delete().eq("id", uid).execute()
-
-    # -- Tokens --
-    def create_token(self, tok, uid, kind, expires):
-        self.sb.table("tokens").insert({
-            "token": tok, "user_id": uid, "kind": kind, "expires": expires
-        }).execute()
-
-    def take_token(self, tok, kind):
-        r = self.sb.table("tokens").select("*").eq("token", tok).eq("kind", kind).maybe_single().execute()
-        if not r or not getattr(r, "data", None) or r.data.get("expires", "") < datetime.utcnow().isoformat():
-            return None
-        uid = r.data["user_id"]
-        self.sb.table("tokens").delete().eq("token", tok).execute()
-        return uid
-
-    # -- Prescriptions --
-    def save_prescription(self, uid, raw_text):
-        r = self.sb.table("prescriptions").insert({
-            "user_id": uid, "raw": raw_text[:5000],
-            "created": datetime.utcnow().isoformat()
-        }).execute()
-        return r.data[0]["id"] if r.data else None
-
     def save_medicine(self, rx_id, uid, name, strength, freq, times_json, days, confidence=1.0):
         r = self.sb.table("medicines").insert({
-            "rx_id": rx_id, "user_id": uid, "name": name, "strength": strength,
+            "rx_id": rx_id, "user_id": str(uid), "name": name, "strength": strength,
             "freq": freq, "times": times_json, "days": days, "confidence": confidence
         }).execute()
-        return r.data[0]["id"] if r.data else None
+        return r.data[0]["id"] if (r and getattr(r, "data", None)) else None
 
     def save_dose(self, med_id, uid, due):
         self.sb.table("doses").insert({
-            "med_id": med_id, "user_id": uid, "due": due, "status": "pending"
+            "med_id": med_id, "user_id": str(uid), "due": due, "status": "pending"
         }).execute()
 
     def get_medicines(self, uid):
         r = self.sb.table("medicines").select("id,name,strength,freq,times,days,confidence") \
-            .eq("user_id", uid).order("id", desc=True).execute()
+            .eq("user_id", str(uid)).order("id", desc=True).execute()
         return r.data or []
 
     def get_due_doses(self, uid, now_str):
         r = self.sb.table("doses").select("id,due,med_id") \
-            .eq("user_id", uid).eq("status", "pending") \
+            .eq("user_id", str(uid)).eq("status", "pending") \
             .lte("due", now_str).order("due").limit(20).execute()
-        if not r.data:
+        if not r or not getattr(r, "data", None):
             return []
-        # join with medicine names
         med_ids = list({d["med_id"] for d in r.data})
+        if not med_ids:
+            return []
         mr = self.sb.table("medicines").select("id,name,strength").in_("id", med_ids).execute()
         med_map = {m["id"]: m for m in (mr.data or [])}
         result = []
@@ -237,9 +194,9 @@ class SupabaseDB:
     def update_dose(self, dose_id, uid, status):
         if status == "snooze":
             new_due = (datetime.now() + timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M")
-            self.sb.table("doses").update({"due": new_due}).eq("id", dose_id).eq("user_id", uid).execute()
+            self.sb.table("doses").update({"due": new_due}).eq("id", dose_id).eq("user_id", str(uid)).execute()
         else:
-            self.sb.table("doses").update({"status": status}).eq("id", dose_id).eq("user_id", uid).execute()
+            self.sb.table("doses").update({"status": status}).eq("id", dose_id).eq("user_id", str(uid)).execute()
 
 sdb = SupabaseDB(supabase_client) if USE_SUPABASE else None
 
@@ -324,32 +281,51 @@ def register():
         return jsonify(error="Password must be at least 8 characters."), 400
 
     if USE_SUPABASE:
-        if sdb.get_user_by_email(e):
-            return jsonify(error="An account with this email already exists."), 409
-        uid = sdb.create_user(e, generate_password_hash(p))
+        try:
+            res = supabase_client.auth.sign_up({"email": e, "password": p})
+            if not res or not res.user:
+                return jsonify(error="Failed to create account with Supabase."), 400
+            msg = "Account created! Check your email for the confirmation link, then log in."
+            if res.user.confirmed_at or res.session:
+                msg = "Account created successfully! You can now log in."
+            return jsonify(ok=True, message=msg)
+        except Exception as ex:
+            err_msg = str(ex)
+            if "already registered" in err_msg.lower():
+                return jsonify(error="An account with this email already exists."), 409
+            if "rate limit" in err_msg.lower():
+                return jsonify(error="Rate limit exceeded. Please wait a few minutes or disable email confirmation in Supabase."), 429
+            return jsonify(error=err_msg), 400
     else:
         if q("SELECT 1 FROM users WHERE email=?", (e,)).fetchone():
             return jsonify(error="An account with this email already exists."), 409
         uid = q("INSERT INTO users(email,pw,created) VALUES(?,?,?)",
                 (e, generate_password_hash(p), datetime.utcnow().isoformat())).lastrowid
         _sqlite().commit()
-
-    mail(e, "Verify your MediAssist email",
-         f"Verify: {os.getenv('BASE_URL')}/#/verify/{make_token(uid, 'verify', 48)}")
-    return jsonify(ok=True)
+        mail(e, "Verify your MediAssist email",
+             f"Verify: {os.getenv('BASE_URL')}/#/verify/{make_token(uid, 'verify', 48)}")
+        return jsonify(ok=True)
 
 
 @app.post("/api/verify")
 def verify():
-    uid = take_token((request.get_json(silent=True) or {}).get("token", ""), "verify")
-    if not uid:
-        return jsonify(error="This link is invalid or expired."), 400
+    d = request.get_json(silent=True) or {}
+    tok = d.get("token", "")
     if USE_SUPABASE:
-        sdb.verify_user(uid)
+        try:
+            res = supabase_client.auth.verify_otp({"token_hash": tok, "type": "signup"})
+            if res and res.user:
+                return jsonify(ok=True)
+        except Exception:
+            pass
+        return jsonify(ok=True)
     else:
+        uid = take_token(tok, "verify")
+        if not uid:
+            return jsonify(error="This link is invalid or expired."), 400
         q("UPDATE users SET verified=1 WHERE id=?", (uid,))
         _sqlite().commit()
-    return jsonify(ok=True)
+        return jsonify(ok=True)
 
 
 @app.post("/api/login")
@@ -357,22 +333,49 @@ def verify():
 def login():
     e, p = creds()
     if USE_SUPABASE:
-        u = sdb.get_user_by_email(e)
+        try:
+            res = supabase_client.auth.sign_in_with_password({"email": e, "password": p})
+            if not res or not res.user:
+                return jsonify(error="Incorrect email or password."), 401
+            session.clear()
+            uid = str(res.user.id)
+            session["uid"] = uid
+            session["email"] = res.user.email
+            onb = 0
+            try:
+                pr = supabase_client.table("profiles").select("onboarded").eq("id", uid).maybe_single().execute()
+                if pr and getattr(pr, "data", None):
+                    onb = int(pr.data.get("onboarded", 0))
+            except Exception:
+                pass
+            session["onboarded"] = onb
+            return jsonify(ok=True)
+        except Exception as ex:
+            err_msg = str(ex).lower()
+            if "invalid login credentials" in err_msg:
+                return jsonify(error="Incorrect email or password."), 401
+            if "email not confirmed" in err_msg:
+                return jsonify(error="Please confirm your email first. Check your inbox for the Supabase confirmation link."), 403
+            return jsonify(error=str(ex)), 400
     else:
         row = q("SELECT * FROM users WHERE email=?", (e,)).fetchone()
         u = dict(row) if row else None
-
-    if not u or not check_password_hash(u["pw"], p):
-        return jsonify(error="Incorrect email or password."), 401
-    if not u["verified"]:
-        return jsonify(error="Verify your email first. Check your inbox."), 403
-    session.clear()
-    session["uid"] = u["id"]
-    return jsonify(ok=True)
+        if not u or not check_password_hash(u["pw"], p):
+            return jsonify(error="Incorrect email or password."), 401
+        if not u["verified"]:
+            return jsonify(error="Verify your email first. Check your inbox."), 403
+        session.clear()
+        session["uid"] = u["id"]
+        return jsonify(ok=True)
 
 
 @app.post("/api/logout")
 def logout():
+    if USE_SUPABASE:
+        try:
+            supabase_client.auth.sign_out()
+        except Exception:
+            pass
     session.clear()
     return jsonify(ok=True)
 
@@ -381,33 +384,57 @@ def logout():
 @limiter.limit("5/hour")
 def forgot():
     e, _ = creds()
+    if not EMAIL_RE.match(e):
+        return jsonify(error="Enter a valid email address."), 400
     if USE_SUPABASE:
-        u = sdb.get_user_by_email(e)
-        uid = u["id"] if u else None
+        try:
+            base = os.getenv("BASE_URL", "").rstrip("/")
+            opts = {"redirect_to": f"{base}/#/reset"} if base else {}
+            supabase_client.auth.reset_password_for_email(e, opts)
+        except Exception as ex:
+            print("[MediAssist] Supabase reset password email error:", ex)
+        return jsonify(ok=True)
     else:
         row = q("SELECT id FROM users WHERE email=?", (e,)).fetchone()
-        uid = row["id"] if row else None
-    if uid:
-        mail(e, "Reset your MediAssist password",
-             f"Reset: {os.getenv('BASE_URL')}/#/reset/{make_token(uid, 'reset', 1)}")
-    return jsonify(ok=True)
+        if row:
+            mail(e, "Reset your MediAssist password",
+                 f"Reset: {os.getenv('BASE_URL')}/#/reset/{make_token(row['id'], 'reset', 1)}")
+        return jsonify(ok=True)
 
 
 @app.post("/api/reset")
 @limiter.limit("10/hour")
 def reset():
     d = request.get_json(silent=True) or {}
-    if len(d.get("password", "")) < 8:
+    p = d.get("password", "")
+    if len(p) < 8:
         return jsonify(error="Password must be at least 8 characters."), 400
-    uid = take_token(d.get("token", ""), "reset")
-    if not uid:
-        return jsonify(error="This link is invalid or expired."), 400
+
     if USE_SUPABASE:
-        sdb.set_password(uid, generate_password_hash(d["password"]))
+        uid = session.get("uid")
+        if uid:
+            try:
+                supabase_client.auth.admin.update_user_by_id(str(uid), {"password": p})
+                return jsonify(ok=True)
+            except Exception as ex:
+                return jsonify(error=str(ex)), 400
+        tok = d.get("token", "")
+        if tok:
+            try:
+                res = supabase_client.auth.verify_otp({"token_hash": tok, "type": "recovery"})
+                if res and res.user:
+                    supabase_client.auth.admin.update_user_by_id(str(res.user.id), {"password": p})
+                    return jsonify(ok=True)
+            except Exception:
+                pass
+        return jsonify(error="This reset link is invalid or expired."), 400
     else:
-        q("UPDATE users SET pw=? WHERE id=?", (generate_password_hash(d["password"]), uid))
+        uid = take_token(d.get("token", ""), "reset")
+        if not uid:
+            return jsonify(error="This reset link is invalid or expired."), 400
+        q("UPDATE users SET pw=? WHERE id=?", (generate_password_hash(p), uid))
         _sqlite().commit()
-    return jsonify(ok=True)
+        return jsonify(ok=True)
 
 
 @app.get("/api/me")
@@ -415,10 +442,17 @@ def me():
     if "uid" not in session:
         return jsonify(user=None)
     if USE_SUPABASE:
-        u = sdb.get_user_by_id(session["uid"])
-        if u:
-            return jsonify(user={"email": u["email"], "onboarded": u["onboarded"]})
-        return jsonify(user=None)
+        uid = str(session["uid"])
+        email = session.get("email", "")
+        onboarded_val = session.get("onboarded", 0)
+        try:
+            pr = supabase_client.table("profiles").select("onboarded,email").eq("id", uid).maybe_single().execute()
+            if pr and getattr(pr, "data", None):
+                email = pr.data.get("email") or email
+                onboarded_val = pr.data.get("onboarded", onboarded_val)
+        except Exception:
+            pass
+        return jsonify(user={"email": email, "onboarded": int(onboarded_val)})
     else:
         u = q("SELECT email,onboarded FROM users WHERE id=?", (session["uid"],)).fetchone()
         return jsonify(user=dict(u) if u else None)
@@ -427,8 +461,13 @@ def me():
 @app.post("/api/onboarded")
 @auth
 def onboarded():
+    uid = str(session["uid"])
     if USE_SUPABASE:
-        sdb.set_onboarded(session["uid"])
+        try:
+            supabase_client.table("profiles").update({"onboarded": 1}).eq("id", uid).execute()
+        except Exception as ex:
+            print("[MediAssist] update onboarded error:", ex)
+        session["onboarded"] = 1
     else:
         q("UPDATE users SET onboarded=1 WHERE id=?", (session["uid"],))
         _sqlite().commit()
@@ -438,13 +477,25 @@ def onboarded():
 @app.delete("/api/account")
 @auth
 def delete_account():
-    u = session["uid"]
+    uid = str(session["uid"])
     if USE_SUPABASE:
-        sdb.delete_user(u)
+        for t in ("doses", "medicines", "prescriptions"):
+            try:
+                supabase_client.table(t).delete().eq("user_id", uid).execute()
+            except Exception:
+                pass
+        try:
+            supabase_client.table("profiles").delete().eq("id", uid).execute()
+        except Exception:
+            pass
+        try:
+            supabase_client.auth.admin.delete_user(uid)
+        except Exception as ex:
+            print("[MediAssist] delete user error:", ex)
     else:
         for t in ("doses", "medicines", "prescriptions", "tokens"):
-            q(f"DELETE FROM {t} WHERE user_id=?", (u,))
-        q("DELETE FROM users WHERE id=?", (u,))
+            q(f"DELETE FROM {t} WHERE user_id=?", (uid,))
+        q("DELETE FROM users WHERE id=?", (uid,))
         _sqlite().commit()
     session.clear()
     return jsonify(ok=True)
