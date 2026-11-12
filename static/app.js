@@ -52,7 +52,22 @@ const routes={
   app.innerHTML='<section><span class=spin></span> Loading...</section>';let m=[];try{m=await api('/medicines')}catch(e){app.innerHTML=`<section class=err>${e.message}</section>`;return}
   const todayStr=new Date().toISOString().slice(0,10);
   app.innerHTML=`<section><h1>Your medicines</h1>
-  <div class=card><h3>Scan a prescription</h3><input type=file id=img accept="image/*" capture=environment><div class=err id=serr></div><div id=draft></div></div>
+  <div class=card>
+    <h3>Scan a prescription</h3>
+    <p style="color:var(--mut);font-size:14px;margin:0 0 14px">Upload a prescription photo from your gallery or capture one with your camera.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+      <label class="btn" style="cursor:pointer;margin:0;display:inline-flex;align-items:center;gap:8px">
+        Choose from Gallery / Files
+        <input type=file id=img accept="image/*" style="display:none">
+      </label>
+      <label class="btn ghost" style="cursor:pointer;margin:0;display:inline-flex;align-items:center;gap:8px">
+        Take Photo with Camera
+        <input type=file id=cam accept="image/*" capture=environment style="display:none">
+      </label>
+    </div>
+    <div class=err id=serr></div>
+    <div id=draft></div>
+  </div>
 
   <h2>AI Consumption & Timing Summary</h2>
   <div class=card id=ai-summary-box>
@@ -109,7 +124,7 @@ const routes={
   <div id=map-status></div>
   <h2>Account</h2><button class="btn danger" id=del>Delete my account</button></section>`;
 
-  $('#img').onchange=scan;$('#loc').onclick=nearby;
+  $('#img').onchange=scan;const cam=$('#cam');if(cam)cam.onchange=scan;$('#loc').onclick=nearby;
   const sBtn=$('#search-btn');
   if(sBtn){
     sBtn.onclick=()=>{ searchArea($('#area').value); };
