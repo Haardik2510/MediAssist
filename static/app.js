@@ -106,25 +106,22 @@ const routes={
       <td>${esc(x.freq)}</td>
       <td>${x.times.join(', ')}</td>
       <td>${x.days}d</td>
-      <td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a> · <a href="https://www.netmeds.com/catalogsearch/result/${encodeURIComponent(x.name)}/all" target=_blank rel="noopener">Netmeds</a></td>
+      <td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a></td>
+      <!-- online pharmacy provider: 1mg.com (reference: netmeds.com) -->
       <td><button class="btn danger sm del-med" data-id="${x.id}">Delete</button></td>
     </tr>`).join('')}
   </table></div>`:'<div class=empty>No medicines yet. Scan your first prescription above.</div>'}
 
   <h2>Nearby pharmacies</h2>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
-    <a class="btn" style="background:#4285f4;color:#fff;text-decoration:none" href="https://www.google.com/maps/search/pharmacies+near+me/" target=_blank rel=noopener id=gmaps-start>Open Google Maps Nearby</a>
-    <button class="btn ghost" id=loc>Use my GPS location</button>
-    <div style="display:flex;gap:8px;flex:1;min-width:260px">
-      <input type=text id=area placeholder="Or enter city / area / pincode (e.g. Delhi, 110001)" style="flex:1">
-      <button class="btn" id=search-btn>Search Area</button>
-    </div>
+  <div style="margin-bottom:12px">
+    <a class="btn" style="background:#4285f4;color:#fff;text-decoration:none;display:inline-block" href="https://www.google.com/maps/search/pharmacies+near+me/" target=_blank rel=noopener id=gmaps-start>Open Google Maps Nearby</a>
   </div>
   <div id=map hidden></div>
   <div id=map-status></div>
   <h2>Account</h2><button class="btn danger" id=del>Delete my account</button></section>`;
 
-  $('#img').onchange=scan;const cam=$('#cam');if(cam)cam.onchange=scan;$('#loc').onclick=nearby;
+  $('#img').onchange=scan;const cam=$('#cam');if(cam)cam.onchange=scan;
+  const locBtn=$('#loc');if(locBtn)locBtn.onclick=nearby;
   const sBtn=$('#search-btn');
   if(sBtn){
     sBtn.onclick=()=>{ searchArea($('#area').value); };
