@@ -33,3 +33,10 @@ footer{padding:40px 5vw;border-top:1px solid var(--bd);color:var(--mut);display:
 .doc h2{margin-top:30px}.doc{max-width:760px}
 @media(max-width:640px){section{padding:60px 5vw}nav div .hide{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto}}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:6px}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.badge.taken{background:rgba(45,212,191,0.18);color:#2dd4bf;border:1px solid rgba(45,212,191,0.4)}
+.badge.pending{background:rgba(59,130,246,0.18);color:#60a5fa;border:1px solid rgba(59,130,246,0.4)}
+.badge.skipped{background:rgba(148,163,184,0.18);color:#94a3b8;border:1px solid rgba(148,163,184,0.4)}
+.timeline-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd);gap:10px;flex-wrap:wrap}
+.slot-card{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-top:10px}

@@ -33,8 +33,33 @@ const routes={
  reset:t=>{app.innerHTML=form('New password',[['password','New password','password']],'Save password');bind(async d=>{await api('/reset',{body:{...d,token:t}});location.hash='#/login'})},
  verify:async t=>{app.innerHTML='<section><span class=spin></span> Verifying...</section>';try{await api('/verify',{body:{token:t}});app.innerHTML='<section><h1>Email verified</h1><a class=btn href=#/login>Log in</a></section>'}catch(e){app.innerHTML=`<section><h1>Verification failed</h1><p class=err>${e.message}</p></section>`}},
  dash:async()=>{if(!user)return location.hash='#/login';app.innerHTML='<section><span class=spin></span> Loading...</section>';let m=[];try{m=await api('/medicines')}catch(e){app.innerHTML=`<section class=err>${e.message}</section>`;return}
-  app.innerHTML=`<section><h1>Your medicines</h1><div class=card><h3>Scan a prescription</h3><input type=file id=img accept="image/*" capture=environment><div class=err id=serr></div><div id=draft></div></div>
-  <h2>Schedule</h2>${m.length?`<div class=card><table><tr><th>Medicine<th>Frequency<th>Times<th>Days<th>Buy Online</tr>${m.map(x=>`<tr><td><b>${esc(x.name)}</b> ${esc(x.strength)}<td>${esc(x.freq)}<td>${x.times.join(', ')}<td>${x.days}d<td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a> · <a href="https://www.netmeds.com/catalogsearch/result/${encodeURIComponent(x.name)}/all" target=_blank rel="noopener">Netmeds</a></tr>`).join('')}</table></div>`:'<div class=empty>No medicines yet. Scan your first prescription above.</div>'}
+  const todayStr=new Date().toISOString().slice(0,10);
+  app.innerHTML=`<section><h1>Your medicines</h1>
+  <div class=card><h3>Scan a prescription</h3><input type=file id=img accept="image/*" capture=environment><div class=err id=serr></div><div id=draft></div></div>
+
+  <h2>AI Consumption & Timing Summary</h2>
+  <div class=card id=ai-summary-box>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span class="badge" style="background:#0284c7;color:#fff">AI Clinical Guidance</span>
+      <button class="btn ghost sm" id=btn-reload-summary>Refresh Summary</button>
+    </div>
+    <div id=ai-summary-body><span class=spin></span> Analyzing your medications and consumption timing...</div>
+  </div>
+
+  <h2>Timeline & History Calendar</h2>
+  <div class=card>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn ghost sm" id=cal-prev>&lt; Previous</button>
+      <input type=date id=cal-date value="${todayStr}" style="width:auto;min-width:160px;padding:8px 12px">
+      <button class="btn ghost sm" id=cal-next>Next &gt;</button>
+      <button class="btn sm" id=cal-today>Today</button>
+    </div>
+    <div id=timeline-content><span class=spin></span> Loading timeline...</div>
+  </div>
+
+  <h2>Schedule</h2>
+  ${m.length?`<div class=card style="overflow-x:auto"><table><tr><th>Medicine<th>Frequency<th>Times<th>Days<th>Buy Online<th>Action</tr>${m.map(x=>`<tr data-mid="${x.id}"><td><b>${esc(x.name)}</b> ${esc(x.strength)}<td>${esc(x.freq)}<td>${x.times.join(', ')}<td>${x.days}d<td><a href="https://www.1mg.com/search/all?name=${encodeURIComponent(x.name)}" target=_blank rel="noopener">1mg</a> · <a href="https://www.netmeds.com/catalogsearch/result/${encodeURIComponent(x.name)}/all" target=_blank rel="noopener">Netmeds</a><td><button class="btn danger sm del-med" data-id="${x.id}">Delete</button></tr>`).join('')}</table></div>`:'<div class=empty>No medicines yet. Scan your first prescription above.</div>'}
+
   <h2>Nearby pharmacies</h2>
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
     <a class="btn" style="background:#4285f4;color:#fff;text-decoration:none" href="https://www.google.com/maps/search/pharmacies+near+me/" target=_blank rel=noopener id=gmaps-start>Open Google Maps Nearby</a>
@@ -47,12 +72,128 @@ const routes={
   <div id=map hidden></div>
   <div id=map-status></div>
   <h2>Account</h2><button class="btn danger" id=del>Delete my account</button></section>`;
+
   $('#img').onchange=scan;$('#loc').onclick=nearby;
-   const sBtn = $('#search-btn');
-   if(sBtn){
-     sBtn.onclick=()=>{ searchArea($('#area').value); };
-     $('#area').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); searchArea($('#area').value); } };
-   }$('#del').onclick=async()=>{if(confirm('Permanently delete your account and all data?')){await api('/account',{method:'DELETE'});user=null;nav();location.hash='#/'}};
+  const sBtn=$('#search-btn');
+  if(sBtn){
+    sBtn.onclick=()=>{ searchArea($('#area').value); };
+    $('#area').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); searchArea($('#area').value); } };
+  }
+
+  document.querySelectorAll('.del-med').forEach(btn=>{
+    btn.onclick=async()=>{
+      const mid=btn.getAttribute('data-id');
+      if(confirm('Are you sure you want to delete this medicine and its upcoming doses?')){
+        btn.disabled=true;
+        try{
+          await api('/medicines/'+mid,{method:'DELETE'});
+          routes.dash();
+        }catch(err){
+          alert(err.message||'Failed to delete medicine.');
+          btn.disabled=false;
+        }
+      }
+    };
+  });
+
+  const loadTimeline=async(dStr)=>{
+    const box=$('#timeline-content');
+    if(!box)return;
+    box.innerHTML='<span class=spin></span> Loading doses...';
+    try{
+      const data=await api('/timeline?date='+dStr);
+      const doses=data.doses||[];
+      if(!doses.length){
+        box.innerHTML='<p class="empty" style="padding:20px">No scheduled doses for '+esc(dStr)+'.</p>';
+        return;
+      }
+      box.innerHTML=doses.map(d=>{
+        const timePart=(d.due||'').split(' ')[1]||d.due;
+        let badgeClass='badge pending';
+        let statusLabel='Pending';
+        if(d.status==='taken'){badgeClass='badge taken';statusLabel='Taken';}
+        else if(d.status==='skipped'){badgeClass='badge skipped';statusLabel='Skipped';}
+        const actions=d.status==='pending'?`<div style="display:flex;gap:6px"><button class="btn sm log-dose-btn" data-id="${d.id}" data-st="taken">Take Dose</button><button class="btn ghost sm log-dose-btn" data-id="${d.id}" data-st="skipped">Skip</button></div>`:`<span class="${badgeClass}">${statusLabel}</span>`;
+        return `<div class=timeline-item><div><span class="badge" style="background:#1e293b;color:#cbd5e1;margin-right:8px;font-family:monospace">${esc(timePart)}</span><b>${esc(d.name)}</b> <span style="color:var(--mut)">${esc(d.strength||'')}</span></div><div>${actions}</div></div>`;
+      }).join('');
+      box.querySelectorAll('.log-dose-btn').forEach(b=>{
+        b.onclick=async()=>{
+          const did=b.getAttribute('data-id');
+          const st=b.getAttribute('data-st');
+          b.disabled=true;
+          try{
+            await api('/doses/'+did,{body:{status:st}});
+            loadTimeline($('#cal-date').value);
+          }catch(e){
+            alert(e.message);
+            b.disabled=false;
+          }
+        };
+      });
+    }catch(err){box.innerHTML=`<p class=err>${err.message}</p>`}
+  };
+
+  const cInput=$('#cal-date');
+  if(cInput){
+    cInput.onchange=()=>loadTimeline(cInput.value);
+    $('#cal-today').onclick=()=>{ cInput.value=todayStr; loadTimeline(todayStr); };
+    $('#cal-prev').onclick=()=>{
+      const d=new Date(cInput.value||todayStr);
+      d.setDate(d.getDate()-1);
+      cInput.value=d.toISOString().slice(0,10);
+      loadTimeline(cInput.value);
+    };
+    $('#cal-next').onclick=()=>{
+      const d=new Date(cInput.value||todayStr);
+      d.setDate(d.getDate()+1);
+      cInput.value=d.toISOString().slice(0,10);
+      loadTimeline(cInput.value);
+    };
+    loadTimeline(todayStr);
+  }
+
+  const loadSummary=async()=>{
+    const box=$('#ai-summary-body');
+    if(!box)return;
+    box.innerHTML='<span class=spin></span> Generating clinical timing regimen...';
+    try{
+      const data=await api('/medicines/summary');
+      if(!data.total_medications){
+        box.innerHTML='<p class="empty" style="padding:16px">No active medicines scheduled. Scan or enter a prescription to see smart consumption instructions.</p>';
+        return;
+      }
+      let html=`<p style="font-size:15px;line-height:1.6;margin-bottom:14px"><b>Regimen Overview:</b> ${esc(data.summary)}</p>`;
+      const slots=data.slots||{};
+      const slotDefs=[
+        {key:'morning',title:'Morning (Breakfast / Empty Stomach)',color:'#0284c7'},
+        {key:'afternoon',title:'Afternoon (Lunch)',color:'#0f766e'},
+        {key:'evening',title:'Evening (Dinner)',color:'#b45309'},
+        {key:'night',title:'Night (Bedtime)',color:'#6366f1'}
+      ];
+      html+='<div class=grid style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">';
+      slotDefs.forEach(s=>{
+        const items=slots[s.key]||[];
+        if(items.length){
+          html+=`<div class=slot-card style="border-left:4px solid ${s.color}"><b style="color:${s.color};display:block;margin-bottom:6px">${s.title}</b>${items.map(it=>`<div style="font-size:14px;margin-bottom:6px"><b>${esc(it.name)}</b> <span style="font-family:monospace;color:var(--mut)">(${esc(it.time)})</span><br><span style="color:var(--mut);font-size:12px">${esc(it.hint)}</span></div>`).join('')}</div>`;
+        }
+      });
+      html+='</div>';
+      if(data.guidelines&&data.guidelines.length){
+        html+='<div style="margin-top:14px"><b style="font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Doctor Instructions & Precautions</b><div style="margin-top:8px;display:grid;gap:8px">';
+        data.guidelines.forEach(g=>{
+          html+=`<div style="padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid var(--bd);border-radius:8px"><b>${esc(g.medicine)}:</b> <span style="color:#2dd4bf">${esc(g.timing)}</span> - ${esc(g.instructions)} <i style="color:var(--mut)">(${esc(g.note)})</i></div>`;
+        });
+        html+='</div></div>';
+      }
+      box.innerHTML=html;
+    }catch(err){box.innerHTML=`<p class=err>${err.message}</p>`}
+  };
+
+  const btnReload=$('#btn-reload-summary');
+  if(btnReload)btnReload.onclick=loadSummary;
+  loadSummary();
+
+  $('#del').onclick=async()=>{if(confirm('Permanently delete your account and all data?')){await api('/account',{method:'DELETE'});user=null;nav();location.hash='#/'}};
   if(!user.onboarded)onboard();remind()},
  privacy:()=>doc('Privacy Policy',['What we collect','Your email, hashed password, uploaded prescription text and your medicine schedule. Images are processed in memory and not stored.','How we use it','Only to run your account, scan prescriptions and send reminders. We do not sell data.','Your rights','You can delete your account and all associated data at any time from the dashboard.','Contact','Add your contact email here before launch.']),
  terms:()=>doc('Terms of Service',['Assistive tool','MediAssist helps you organise medicines. It is not medical advice and does not replace a doctor or pharmacist.','Accuracy','OCR can be wrong. You must confirm every medicine and dose before saving.','Use','Do not misuse the service. We may suspend abusive accounts.','Liability','The service is provided as is. Have these terms reviewed by a lawyer before launch.'])};

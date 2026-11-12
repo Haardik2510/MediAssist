@@ -200,6 +200,34 @@ class SupabaseDB:
         else:
             self.sb.table("doses").update({"status": status}).eq("id", dose_id).eq("user_id", str(uid)).execute()
 
+    def delete_medicine(self, med_id, uid):
+        self.sb.table("doses").delete().eq("med_id", med_id).eq("user_id", str(uid)).execute()
+        self.sb.table("medicines").delete().eq("id", med_id).eq("user_id", str(uid)).execute()
+
+    def get_timeline(self, uid, date_str):
+        prefix = f"{date_str}%"
+        r = self.sb.table("doses").select("id,due,status,med_id") \
+            .eq("user_id", str(uid)).like("due", prefix).order("due").execute()
+        doses_data = r.data or []
+        if not doses_data:
+            return []
+        med_ids = list({d["med_id"] for d in doses_data})
+        if not med_ids:
+            return []
+        mr = self.sb.table("medicines").select("id,name,strength").in_("id", med_ids).execute()
+        med_map = {m["id"]: m for m in (mr.data or [])}
+        res = []
+        for d in doses_data:
+            m = med_map.get(d["med_id"], {})
+            res.append({
+                "id": d["id"],
+                "due": d["due"],
+                "status": d.get("status", "pending"),
+                "name": m.get("name", "Medicine"),
+                "strength": m.get("strength", "")
+            })
+        return res
+
 sdb = SupabaseDB(supabase_client) if USE_SUPABASE else None
 
 # ─── Email helper ─────────────────────────────────────────────────────────────
@@ -818,6 +846,243 @@ def dose(i):
             q("UPDATE doses SET status=? WHERE id=? AND user_id=?", (s, i, session["uid"]))
         _sqlite().commit()
     return jsonify(ok=True)
+
+
+@app.delete("/api/medicines/<int:mid>")
+@auth
+def delete_medicine_route(mid):
+    u = session["uid"]
+    if USE_SUPABASE:
+        try:
+            sdb.delete_medicine(mid, u)
+        except Exception as ex:
+            return jsonify(error=str(ex)), 400
+    else:
+        q("DELETE FROM doses WHERE med_id=? AND user_id=?", (mid, u))
+        q("DELETE FROM medicines WHERE id=? AND user_id=?", (mid, u))
+        _sqlite().commit()
+    return jsonify(ok=True)
+
+
+@app.get("/api/timeline")
+@auth
+def timeline_route():
+    u = session["uid"]
+    date_str = (request.args.get("date") or "").strip()
+    if not date_str or not re.match(r"^\d{4}-\d{2}-\d{2}$", date_str):
+        date_str = datetime.now().strftime("%Y-%m-%d")
+
+    if USE_SUPABASE:
+        doses = sdb.get_timeline(u, date_str)
+    else:
+        prefix = f"{date_str}%"
+        rows = q("""
+            SELECT d.id, d.due, d.status, m.name, m.strength
+            FROM doses d
+            JOIN medicines m ON m.id = d.med_id
+            WHERE d.user_id = ? AND d.due LIKE ?
+            ORDER BY d.due ASC
+        """, (u, prefix)).fetchall()
+        doses = [dict(r) for r in rows]
+
+    return jsonify(date=date_str, doses=doses)
+
+
+MED_GUIDELINES = {
+    "metformin": {
+        "when": "With breakfast and dinner",
+        "instructions": "Take with or right after food to minimize nausea or stomach upset.",
+        "note": "Antidiabetic therapy. Avoid skipping meals."
+    },
+    "omeprazole": {
+        "when": "Morning (08:00), 30-60 min before breakfast",
+        "instructions": "Take on an empty stomach with a full glass of water.",
+        "note": "Acid suppressor (PPI). Do not crush or chew."
+    },
+    "pantoprazole": {
+        "when": "Morning (08:00), 30 min before food",
+        "instructions": "Take on an empty stomach before morning meal.",
+        "note": "Acid suppressor (PPI). Swallow tablet whole."
+    },
+    "rabeprazole": {
+        "when": "Morning, 30 min before food",
+        "instructions": "Take before breakfast with water.",
+        "note": "Gastroprotective acid inhibitor."
+    },
+    "atorvastatin": {
+        "when": "Bedtime (22:00)",
+        "instructions": "Take in the evening or at night. Cholesterol synthesis peaks during sleep.",
+        "note": "Lipid-lowering statin. Avoid large amounts of grapefruit juice."
+    },
+    "rosuvastatin": {
+        "when": "Bedtime (22:00)",
+        "instructions": "Take once daily in the evening with or without meals.",
+        "note": "Lipid-lowering statin. Consistent daily timing is key."
+    },
+    "aspirin": {
+        "when": "After breakfast or lunch",
+        "instructions": "Take with food and a full glass of water. Do not lie down for 15 minutes.",
+        "note": "Cardioprotective antiplatelet."
+    },
+    "ecosprin": {
+        "when": "After morning or afternoon meal",
+        "instructions": "Always take with food to protect gastric lining.",
+        "note": "Low-dose antiplatelet."
+    },
+    "amlodipine": {
+        "when": "Morning (08:00 - 09:00)",
+        "instructions": "Take at the same time each morning with water.",
+        "note": "Blood pressure management. Regular monitoring recommended."
+    },
+    "telmisartan": {
+        "when": "Morning (08:00 - 09:00)",
+        "instructions": "Take in the morning with or without food.",
+        "note": "Blood pressure control (ARB). Stay well hydrated."
+    },
+    "ramipril": {
+        "when": "Morning (08:00)",
+        "instructions": "Take before or after breakfast.",
+        "note": "ACE inhibitor for blood pressure & heart health."
+    },
+    "metoprolol": {
+        "when": "With or right after meals (08:00 / 20:00)",
+        "instructions": "Take with food for optimal bio-availability.",
+        "note": "Beta-blocker. Do not discontinue abruptly."
+    },
+    "paracetamol": {
+        "when": "As scheduled, min 4-6 hours between doses",
+        "instructions": "Take with water. Maximum 4000mg in 24 hours.",
+        "note": "Pain & fever relief. Avoid combining with other paracetamol products."
+    },
+    "amoxicillin": {
+        "when": "Every 8h or 12h with water",
+        "instructions": "Take at evenly spaced intervals with food or milk.",
+        "note": "Antibiotic. Finish the complete course even if symptoms improve."
+    },
+    "doxycycline": {
+        "when": "With a large glass of water, upright",
+        "instructions": "Do not lie down for 30 minutes after taking. Avoid dairy within 2 hours.",
+        "note": "Tetracycline antibiotic."
+    },
+    "cetirizine": {
+        "when": "Evening or Bedtime (21:00 - 22:00)",
+        "instructions": "Take with water in the evening as it may cause slight drowsiness.",
+        "note": "Antihistamine for allergy & congestion relief."
+    },
+    "levocetirizine": {
+        "when": "Bedtime (22:00)",
+        "instructions": "Take before sleep with water.",
+        "note": "Second-generation antihistamine."
+    },
+    "montelukast": {
+        "when": "Evening (20:00 - 21:00)",
+        "instructions": "Take once daily in the evening with or without food.",
+        "note": "Leukotriene receptor antagonist for airways & allergy."
+    },
+    "levothyroxine": {
+        "when": "Early morning (07:00), 30-60 min before breakfast",
+        "instructions": "Take on an empty stomach with a full glass of water. Wait 1 hour before coffee/tea.",
+        "note": "Thyroid hormone replacement."
+    },
+    "calcium": {
+        "when": "After lunch or dinner",
+        "instructions": "Take with food for best absorption. Keep 2 hours gap from iron supplements.",
+        "note": "Bone health supplement."
+    },
+    "iron": {
+        "when": "After meals or with vitamin C / juice",
+        "instructions": "Take after meals if stomach upset occurs. Avoid taking with tea, milk, or coffee.",
+        "note": "Iron supplement."
+    },
+    "multivitamin": {
+        "when": "Morning after breakfast",
+        "instructions": "Take with breakfast and plenty of water for optimal daytime absorption.",
+        "note": "Daily wellness supplement."
+    }
+}
+
+
+@app.get("/api/medicines/summary")
+@auth
+def med_summary():
+    u = session["uid"]
+    if USE_SUPABASE:
+        meds_list = sdb.get_medicines(u)
+    else:
+        r = q("SELECT id,name,strength,freq,times,days FROM medicines WHERE user_id=? ORDER BY id DESC",
+              (u,)).fetchall()
+        meds_list = [dict(x) for x in r]
+
+    if not meds_list:
+        return jsonify(
+            summary="No active medicines found in your schedule. Scan or upload a prescription to generate your personalized regimen.",
+            slots={},
+            guidelines=[]
+        )
+
+    slots = {"morning": [], "afternoon": [], "evening": [], "night": []}
+    guidelines = []
+    seen_names = set()
+
+    for m in meds_list:
+        name = str(m.get("name", "")).strip()
+        name_clean = name.lower()
+        strength = str(m.get("strength", "")).strip()
+        times = m.get("times", [])
+        if isinstance(times, str):
+            try:
+                times = json.loads(times)
+            except Exception:
+                times = []
+
+        guide = None
+        for k, g in MED_GUIDELINES.items():
+            if k in name_clean or name_clean in k:
+                guide = g
+                break
+
+        if guide and name_clean not in seen_names:
+            seen_names.add(name_clean)
+            guidelines.append({
+                "medicine": f"{name} {strength}".strip(),
+                "timing": guide["when"],
+                "instructions": guide["instructions"],
+                "note": guide["note"]
+            })
+
+        for t in (times or ["08:00"]):
+            try:
+                hr = int(t.split(":")[0])
+            except Exception:
+                hr = 8
+            entry = f"{name} {strength}".strip()
+            if 5 <= hr < 12:
+                slots["morning"].append({"name": entry, "time": t, "hint": guide["instructions"] if guide else "Take with water as prescribed"})
+            elif 12 <= hr < 17:
+                slots["afternoon"].append({"name": entry, "time": t, "hint": guide["instructions"] if guide else "Take with or after lunch"})
+            elif 17 <= hr < 21:
+                slots["evening"].append({"name": entry, "time": t, "hint": guide["instructions"] if guide else "Take with or after dinner"})
+            else:
+                slots["night"].append({"name": entry, "time": t, "hint": guide["instructions"] if guide else "Take before sleep with water"})
+
+    summary_parts = []
+    if slots["morning"]:
+        summary_parts.append(f"Morning ({len(slots['morning'])} dose{'s' if len(slots['morning'])>1 else ''}): " + ", ".join([x["name"] for x in slots["morning"]]))
+    if slots["afternoon"]:
+        summary_parts.append(f"Afternoon ({len(slots['afternoon'])} dose{'s' if len(slots['afternoon'])>1 else ''}): " + ", ".join([x["name"] for x in slots["afternoon"]]))
+    if slots["evening"]:
+        summary_parts.append(f"Evening ({len(slots['evening'])} dose{'s' if len(slots['evening'])>1 else ''}): " + ", ".join([x["name"] for x in slots["evening"]]))
+    if slots["night"]:
+        summary_parts.append(f"Night ({len(slots['night'])} dose{'s' if len(slots['night'])>1 else ''}): " + ", ".join([x["name"] for x in slots["night"]]))
+
+    narrative = "Your daily regimen is organized into " + " · ".join(summary_parts) + "."
+
+    return jsonify(
+        summary=narrative,
+        slots=slots,
+        guidelines=guidelines,
+        total_medications=len(meds_list)
+    )
 
 
 # ─── Static / Config / Error handlers ────────────────────────────────────────
