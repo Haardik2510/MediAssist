@@ -72,7 +72,7 @@ const routes={
   <h2>AI Consumption & Timing Summary</h2>
   <div class=card id=ai-summary-box>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span class="badge" id=ai-badge style="background:#0284c7;color:#fff">AI Clinical Guidance</span>
+      <span class="badge" id=ai-badge style="background:#ea580c;color:#fff;box-shadow:0 2px 6px rgba(234,88,12,0.3)">AI Clinical Guidance</span>
       <button class="btn ghost sm" id=btn-reload-summary>Refresh Summary</button>
     </div>
     <div id=ai-summary-body><span class=spin></span> Analyzing your medications and consumption timing...</div>
@@ -211,7 +211,7 @@ const routes={
         if(d.status==='taken'){badgeClass='badge taken';statusLabel='Taken';}
         else if(d.status==='skipped'){badgeClass='badge skipped';statusLabel='Skipped';}
         const actions=d.status==='pending'?`<div style="display:flex;gap:6px"><button class="btn sm log-dose-btn" data-id="${d.id}" data-st="taken">Take Dose</button><button class="btn ghost sm log-dose-btn" data-id="${d.id}" data-st="skipped">Skip</button></div>`:`<span class="${badgeClass}">${statusLabel}</span>`;
-        return `<div class=timeline-item><div><span class="badge" style="background:#1e293b;color:#cbd5e1;margin-right:8px;font-family:monospace">${esc(timePart)}</span><b>${esc(d.name)}</b> <span style="color:var(--mut)">${esc(d.strength||'')}</span></div><div>${actions}</div></div>`;
+        return `<div class=timeline-item><div><span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">${esc(timePart)}</span><b>${esc(d.name)}</b> <span style="color:var(--mut)">${esc(d.strength||'')}</span></div><div>${actions}</div></div>`;
       }).join('');
       box.querySelectorAll('.log-dose-btn').forEach(b=>{
         b.onclick=async()=>{
@@ -262,15 +262,15 @@ const routes={
       const badge=$('#ai-badge');
       if(badge&&data.source&&data.source.includes('Gemini')){
         badge.textContent='Google Gemini 1.5 Flash (Live AI)';
-        badge.style.background='#10b981';
+        badge.style.background='#c2410c';
       }
       let html=`<p style="font-size:15px;line-height:1.6;margin-bottom:14px"><b>Regimen Overview:</b> ${esc(data.summary)}</p>`;
       const slots=data.slots||{};
       const slotDefs=[
-        {key:'morning',title:'Morning (Breakfast / Empty Stomach)',color:'#0284c7'},
-        {key:'afternoon',title:'Afternoon (Lunch)',color:'#0f766e'},
-        {key:'evening',title:'Evening (Dinner)',color:'#b45309'},
-        {key:'night',title:'Night (Bedtime)',color:'#6366f1'}
+        {key:'morning',title:'Morning (Breakfast / Empty Stomach)',color:'#ea580c'},
+        {key:'afternoon',title:'Afternoon (Lunch)',color:'#f97316'},
+        {key:'evening',title:'Evening (Dinner)',color:'#c2410c'},
+        {key:'night',title:'Night (Bedtime)',color:'#18181b'}
       ];
       html+='<div class=grid style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">';
       slotDefs.forEach(s=>{
@@ -283,7 +283,7 @@ const routes={
       if(data.guidelines&&data.guidelines.length){
         html+='<div style="margin-top:14px"><b style="font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Doctor Instructions & Precautions</b><div style="margin-top:8px;display:grid;gap:8px">';
         data.guidelines.forEach(g=>{
-          html+=`<div style="padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid var(--bd);border-radius:8px"><b>${esc(g.medicine)}:</b> <span style="color:#2dd4bf">${esc(g.timing)}</span> - ${esc(g.instructions)} <i style="color:var(--mut)">(${esc(g.note)})</i></div>`;
+          html+=`<div style="padding:10px 12px;background:#f8fafc;border:1px solid var(--bd);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.03)"><b>${esc(g.medicine)}:</b> <span style="color:#ea580c;font-weight:600">${esc(g.timing)}</span> - ${esc(g.instructions)} <i style="color:var(--mut)">(${esc(g.note)})</i></div>`;
         });
         html+='</div></div>';
       }
