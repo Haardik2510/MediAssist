@@ -28,6 +28,16 @@ img_dfd = get_b64_image('8eef0fa1d8eea9addf184751b58e247e5ccfcc88.png')
 img_erd = get_b64_image('d6e5b3d7ff1997f35509f8503031634c953a3757.png')
 img_workflow = get_b64_image('5f2ae79ef616ccd35b3e4503475174229f92a37d.png')
 
+# New UI & Component Demonstration Screenshots
+img_fig5 = get_b64_image('fig5_landing.png')
+img_fig6 = get_b64_image('fig6_slider.png')
+img_fig7 = get_b64_image('fig7_dashboard.png')
+img_fig8 = get_b64_image('fig8_ai_guidance.png')
+img_fig9 = get_b64_image('fig9_timeline.png')
+img_fig10 = get_b64_image('fig10_batch_delete.png')
+img_fig11 = get_b64_image('fig11_voice_assistant.png')
+img_fig12 = get_b64_image('fig12_locator.png')
+
 html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +46,7 @@ html_content = f"""<!DOCTYPE html>
 <style>
   @page {{
     size: A4 portrait;
-    margin: 22mm 20mm 22mm 20mm;
+    margin: 20mm 18mm 20mm 18mm;
     @bottom-right {{
       content: counter(page);
     }}
@@ -44,8 +54,8 @@ html_content = f"""<!DOCTYPE html>
   
   body {{
     font-family: 'Times New Roman', Times, serif, 'Segoe UI', Tahoma, Geneva, Verdana;
-    font-size: 11.5pt;
-    line-height: 1.55;
+    font-size: 11pt;
+    line-height: 1.5;
     color: #111111;
     margin: 0;
     padding: 0;
@@ -67,7 +77,7 @@ html_content = f"""<!DOCTYPE html>
   .title-page {{
     text-align: center;
     border: 3px double #1a365d;
-    padding: 30px 24px;
+    padding: 26px 22px;
     height: 94%;
     display: flex;
     flex-direction: column;
@@ -76,7 +86,7 @@ html_content = f"""<!DOCTYPE html>
 
   .inst-header {{
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14pt;
+    font-size: 13.5pt;
     font-weight: bold;
     color: #0f172a;
     letter-spacing: 0.5px;
@@ -87,7 +97,7 @@ html_content = f"""<!DOCTYPE html>
 
   .inst-sub {{
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 11.5pt;
+    font-size: 11pt;
     font-weight: 600;
     color: #334155;
     margin-top: 4px;
@@ -98,26 +108,26 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin: 18px 0;
+    margin: 16px 0;
   }}
 
   .logo-box img {{
-    max-height: 85px;
+    max-height: 80px;
     width: auto;
     object-fit: contain;
   }}
 
   .project-title-box {{
-    margin: 22px 0 16px 0;
+    margin: 18px 0 14px 0;
     border-top: 2px solid #ea580c;
     border-bottom: 2px solid #ea580c;
-    padding: 18px 0;
+    padding: 16px 0;
     background: #fffaf5;
   }}
 
   .project-title {{
     font-family: 'Arial', sans-serif;
-    font-size: 19pt;
+    font-size: 18.5pt;
     font-weight: 800;
     color: #c2410c;
     line-height: 1.25;
@@ -125,29 +135,29 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .project-subtitle {{
-    font-size: 13pt;
+    font-size: 12.5pt;
     font-style: italic;
     color: #475569;
     margin: 0;
   }}
 
   .degree-text {{
-    font-size: 11pt;
-    margin: 14px 0;
+    font-size: 10.5pt;
+    margin: 12px 0;
     color: #1e293b;
     line-height: 1.4;
   }}
 
   .meta-table {{
     width: 100%;
-    margin-top: 15px;
-    font-size: 11pt;
+    margin-top: 12px;
+    font-size: 10.5pt;
     text-align: left;
   }}
 
   .meta-table td {{
     vertical-align: top;
-    padding: 6px 10px;
+    padding: 5px 8px;
     border: none;
   }}
 
@@ -155,32 +165,32 @@ html_content = f"""<!DOCTYPE html>
     font-weight: bold;
     color: #0f172a;
     text-transform: uppercase;
-    font-size: 10pt;
+    font-size: 9.5pt;
     letter-spacing: 0.5px;
   }}
 
   .meta-val {{
-    font-size: 11pt;
+    font-size: 10.5pt;
     color: #1e293b;
   }}
 
   .session-text {{
-    margin-top: 20px;
+    margin-top: 16px;
     font-weight: bold;
-    font-size: 11pt;
+    font-size: 10.5pt;
     color: #0f172a;
   }}
 
   /* Headings */
   h1 {{
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14.5pt;
+    font-size: 14pt;
     font-weight: bold;
     color: #0f172a;
     border-bottom: 1.5pt solid #ea580c;
-    padding-bottom: 4px;
-    margin-top: 24px;
-    margin-bottom: 12px;
+    padding-bottom: 3px;
+    margin-top: 18px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     page-break-after: avoid;
@@ -188,46 +198,46 @@ html_content = f"""<!DOCTYPE html>
 
   h2 {{
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 12.5pt;
+    font-size: 12pt;
     font-weight: bold;
     color: #1e293b;
-    margin-top: 18px;
-    margin-bottom: 8px;
+    margin-top: 14px;
+    margin-bottom: 6px;
     page-break-after: avoid;
   }}
 
   h3 {{
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 11pt;
+    font-size: 10.5pt;
     font-weight: bold;
     color: #334155;
-    margin-top: 12px;
-    margin-bottom: 6px;
+    margin-top: 10px;
+    margin-bottom: 4px;
     page-break-after: avoid;
   }}
 
   p {{
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-indent: 0;
   }}
 
   ul, ol {{
     margin-top: 0;
-    margin-bottom: 12px;
-    padding-left: 24px;
+    margin-bottom: 10px;
+    padding-left: 22px;
   }}
 
   li {{
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }}
 
   /* Formal Tables */
   table.content-table {{
     width: 100%;
     border-collapse: collapse;
-    margin: 14px 0 16px 0;
-    font-size: 9.5pt;
+    margin: 10px 0 14px 0;
+    font-size: 9pt;
     page-break-inside: avoid;
   }}
 
@@ -236,13 +246,13 @@ html_content = f"""<!DOCTYPE html>
     color: #0f172a;
     font-weight: bold;
     border: 1px solid #94a3b8;
-    padding: 6px 8px;
+    padding: 5px 7px;
     text-align: left;
   }}
 
   table.content-table td {{
     border: 1px solid #cbd5e1;
-    padding: 6px 8px;
+    padding: 5px 7px;
     vertical-align: top;
   }}
 
@@ -252,9 +262,9 @@ html_content = f"""<!DOCTYPE html>
 
   .table-title {{
     font-family: Arial, sans-serif;
-    font-size: 9.5pt;
+    font-size: 9pt;
     font-weight: bold;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     text-align: center;
     color: #334155;
     text-transform: uppercase;
@@ -263,13 +273,13 @@ html_content = f"""<!DOCTYPE html>
   /* Figures */
   .fig-container {{
     text-align: center;
-    margin: 16px 0;
+    margin: 12px 0;
     page-break-inside: avoid;
   }}
 
   .fig-container img {{
     max-width: 94%;
-    max-height: 290px;
+    max-height: 270px;
     border: 1px solid #cbd5e1;
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
@@ -279,15 +289,44 @@ html_content = f"""<!DOCTYPE html>
 
   .fig-caption {{
     font-family: Arial, sans-serif;
-    font-size: 9.5pt;
+    font-size: 9pt;
     font-weight: bold;
     color: #334155;
-    margin-top: 6px;
+    margin-top: 5px;
+  }}
+
+  /* Paired Figures for UI Demonstrations */
+  .fig-pair-container {{
+    text-align: center;
+    margin: 6px 0 2px 0;
+    page-break-inside: avoid;
+  }}
+
+  .fig-pair-container img {{
+    max-width: 94%;
+    max-height: 190px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    padding: 3px;
+    background: #ffffff;
+    display: block;
+    margin: 0 auto;
+  }}
+
+  .fig-pair-caption {{
+    font-family: Arial, sans-serif;
+    font-size: 8.5pt;
+    font-weight: bold;
+    color: #334155;
+    margin-top: 4px;
+    margin-bottom: 5px;
+    text-align: center;
   }}
 
   /* Certificate / Declaration signatures */
   .sign-container {{
-    margin-top: 40px;
+    margin-top: 36px;
     display: flex;
     justify-content: space-between;
     page-break-inside: avoid;
@@ -299,50 +338,55 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .sign-line {{
-    border-top: 1px solid #0f172a;
     margin-top: 45px;
+    border-top: 1px solid #0f172a;
     padding-top: 4px;
+    font-weight: bold;
+    color: #0f172a;
+    font-size: 10.5pt;
+  }}
+
+  .sign-sub {{
+    font-size: 9.5pt;
+    color: #475569;
+  }}
+
+  .toc-item {{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 10pt;
+    border-bottom: 1px dotted #cbd5e1;
+    padding-bottom: 1px;
+  }}
+
+  .toc-title {{
+    font-weight: bold;
+    color: #0f172a;
+  }}
+
+  .toc-sub {{
+    padding-left: 18px;
+    color: #334155;
   }}
 
   .callout-box {{
     background: #fff7ed;
     border-left: 4px solid #ea580c;
     padding: 10px 14px;
-    margin: 14px 0;
+    margin: 12px 0;
     font-size: 10pt;
-    border-radius: 0 4px 4px 0;
+    color: #9a3412;
   }}
 
   .score-badge {{
-    display: inline-block;
     background: #16a34a;
     color: #ffffff;
     font-weight: bold;
-    padding: 3px 10px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 10pt;
-  }}
-
-  .toc-item {{
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    border-bottom: 1px dotted #cbd5e1;
-    padding-bottom: 2px;
-  }}
-  .toc-title {{ font-weight: bold; }}
-  .toc-sub {{ padding-left: 20px; font-weight: normal; }}
-
-  .code-snippet {{
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 8.5pt;
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    padding: 8px 12px;
-    border-radius: 4px;
-    line-height: 1.4;
-    overflow-x: auto;
-    margin: 8px 0;
+    font-size: 11pt;
+    display: inline-block;
   }}
 </style>
 </head>
@@ -353,64 +397,54 @@ html_content = f"""<!DOCTYPE html>
 <!-- ========================================================================= -->
 <div class="page title-page">
   <div>
-    <div class="inst-header">Vivekananda Institute of Professional Studies - TC</div>
-    <div class="inst-sub">Vivekananda School of Information Technology</div>
-    <div style="font-size: 10pt; color: #475569; margin-top: 3px;">Affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi</div>
-  </div>
-
-  <div class="logos-container">
-    <div class="logo-box">
-      <img src="{img_vips}" alt="VIPS Logo">
+    <div class="inst-header">Vivekananda Institute of Professional Studies &ndash; Technical Campus</div>
+    <div class="inst-sub">Vivekananda School of Information Technology (VSIT)</div>
+    <div style="font-size: 9.5pt; color: #475569; margin-top: 2px;">(Affiliated to Guru Gobind Singh Indraprastha University, Delhi &bull; Approved by AICTE, New Delhi)</div>
+    
+    <div class="logos-container">
+      <div class="logo-box">
+        <img src="{img_vips}" alt="VIPS-TC Logo">
+      </div>
+      <div class="logo-box">
+        <img src="{img_ggsipu}" alt="GGSIPU Logo">
+      </div>
     </div>
-    <div class="logo-box">
-      <img src="{img_ggsipu}" alt="GGSIPU Logo">
+
+    <div class="project-title-box">
+      <div class="project-title">MEDIASSIST: SMART PRESCRIPTION SCANNER AND MEDICINE REMINDER SYSTEM</div>
+      <div class="project-subtitle">An Accessible, OCR & NLP-Driven Medication Adherence Platform with Clinical Voice Guidance</div>
+    </div>
+
+    <div class="degree-text">
+      A Minor Project Report (MCA-161) submitted in partial fulfillment of the requirements for the award of the degree of<br>
+      <strong>MASTER OF COMPUTER APPLICATIONS (MCA)</strong>
     </div>
   </div>
 
   <div>
-    <div style="font-size: 11pt; font-weight: bold; color: #0f172a; text-transform: uppercase; letter-spacing: 1px;">
-      Master of Computer Applications (MCA)
+    <table class="meta-table">
+      <tr>
+        <td style="width: 50%;">
+          <div class="meta-title">Submitted By:</div>
+          <div class="meta-val"><strong>HAARDIK GOEL</strong></div>
+          <div class="meta-val">Enrollment No: <strong>09415504426</strong></div>
+          <div class="meta-val">MCA &ndash; Semester 1 (Batch 2024 &ndash; 2026)</div>
+          <div class="meta-val">Section: MCA 1 (B)</div>
+        </td>
+        <td style="width: 50%; text-align: right;">
+          <div class="meta-title">Under the Guidance of:</div>
+          <div class="meta-val"><strong>DR. COSMENA MAHAPATRA</strong></div>
+          <div class="meta-val">Faculty Mentor & Associate Professor</div>
+          <div class="meta-val">VSIT, VIPS-TC</div>
+          <div class="meta-val">GGSIP University, Delhi</div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="session-text">
+      DEPARTMENT OF COMPUTER APPLICATIONS<br>
+      ACADEMIC SESSION: 2024 &ndash; 2025 (SEMESTER 1)
     </div>
-    <div style="font-size: 10pt; color: #64748b; font-style: italic; margin-top: 2px;">
-      Minor Project Final Report &bull; Semester 1
-    </div>
-  </div>
-
-  <div class="project-title-box">
-    <div class="project-title">MediAssist: Smart Prescription Scanner & Medicine Reminder System</div>
-    <div class="project-subtitle">An AI-Assisted Clinical Digitization, Regimen Scheduling, and Pharmacy Assistance Web Platform</div>
-  </div>
-
-  <div class="degree-text">
-    A report submitted in partial fulfillment of the requirements for the award of the degree of<br>
-    <strong>MASTER OF COMPUTER APPLICATIONS</strong>
-  </div>
-
-  <table class="meta-table">
-    <tr>
-      <td style="width: 50%;">
-        <div class="meta-title">Submitted To:</div>
-        <div class="meta-val" style="margin-top: 4px;">
-          <strong>Dr. Cosmena Mahapatra</strong><br>
-          Project Mentor & Assistant Professor<br>
-          VSIT, VIPS-TC, Delhi
-        </div>
-      </td>
-      <td style="width: 50%; text-align: right;">
-        <div class="meta-title" style="text-align: right;">Submitted By:</div>
-        <div class="meta-val" style="margin-top: 4px;">
-          <strong>Haardik Goel</strong><br>
-          Enrollment No.: <strong>09415504426</strong><br>
-          MCA 1 (B)<br>
-          VIPS-TC, Delhi
-        </div>
-      </td>
-    </tr>
-  </table>
-
-  <div class="session-text">
-    Academic Session: 2026 – 2027<br>
-    Delhi, India
   </div>
 </div>
 
@@ -418,94 +452,69 @@ html_content = f"""<!DOCTYPE html>
 <!-- CERTIFICATE OF APPROVAL                                                   -->
 <!-- ========================================================================= -->
 <div class="page">
-  <div style="text-align: center; margin-bottom: 25px;">
-    <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">Vivekananda School of Information Technology</div>
-    <div style="font-size: 11pt; color: #475569;">Vivekananda Institute of Professional Studies - TC, Delhi</div>
-  </div>
-
   <h1>Certificate of Approval</h1>
-
+  <p style="margin-top: 25px;">
+    This is to certify that the minor project titled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong>, submitted by <strong>Haardik Goel</strong> (Enrollment No: <strong>09415504426</strong>), a student of <strong>Master of Computer Applications (MCA)</strong>, Semester 1, at Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies &ndash; Technical Campus (VIPS-TC), affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), New Delhi, is an authentic record of original project work carried out under my guidance and supervision.
+  </p>
   <p>
-    This is to certify that the minor project report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong> submitted by <strong>Haardik Goel</strong> (Enrollment No. <strong>09415504426</strong>), student of Master of Computer Applications, <strong>MCA 1 (B)</strong>, at Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC, affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of the candidate's own work carried out under my direct supervision and academic mentorship during Semester 1.
+    The project embodies an automated, accessible prescription parsing, scheduling, clinical guidance, and voice-assisted reminder system, developed in adherence to academic and engineering benchmarks. To the best of my knowledge, the matter embodied in this report has not been submitted to any other university or institute for the award of any degree or diploma.
   </p>
 
-  <p>
-    The project embodies a complete, functioning, cloud-integrated web application featuring automated Optical Character Recognition (OCR), Natural Language Processing (NLP) rule-based clinical frequency parsing, a secure personal vault, Web Push notification scheduling, and geolocation-assisted medicine procurement with 100% test coverage and validation.
-  </p>
-
-  <p>
-    To the best of my knowledge and belief, this report or any part thereof has not been submitted elsewhere for the award of any other degree, diploma, fellowship, or professional associate certificate.
-  </p>
-
-  <div class="sign-container" style="margin-top: 70px;">
+  <div class="sign-container" style="margin-top: 80px;">
     <div class="sign-box">
-      <div class="sign-line">
-        <strong>Dr. Cosmena Mahapatra</strong><br>
-        Project Mentor & Assistant Professor<br>
-        VSIT, VIPS-TC, Delhi
-      </div>
+      <div class="sign-line">Dr. Cosmena Mahapatra</div>
+      <div class="sign-sub">Faculty Mentor & Associate Professor</div>
+      <div class="sign-sub">VSIT, VIPS-TC, GGSIPU Delhi</div>
     </div>
     <div class="sign-box" style="text-align: right;">
-      <div class="sign-line" style="text-align: right;">
-        <strong>Head of Department / Dean</strong><br>
-        Vivekananda School of Information Technology<br>
-        VIPS-TC, Delhi
-      </div>
+      <div class="sign-line" style="text-align: right;">Prof. (Dr.) Supriya Madan</div>
+      <div class="sign-sub">Dean, VSIT</div>
+      <div class="sign-sub">VIPS-TC, GGSIPU Delhi</div>
     </div>
   </div>
 
-  <div style="margin-top: 35px; font-size: 10.5pt; color: #475569;">
-    <strong>Date:</strong> 16th November 2026<br>
-    <strong>Place:</strong> New Delhi
+  <div class="sign-container" style="margin-top: 60px;">
+    <div class="sign-box">
+      <div class="sign-line">Internal Examiner</div>
+      <div class="sign-sub">Date: &hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;</div>
+    </div>
+    <div class="sign-box" style="text-align: right;">
+      <div class="sign-line" style="text-align: right;">External Examiner</div>
+      <div class="sign-sub">Date: &hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;</div>
+    </div>
   </div>
 </div>
 
 <!-- ========================================================================= -->
-<!-- DECLARATION & ACKNOWLEDGEMENT                                             -->
+<!-- DECLARATION OF ORIGINALITY & ACKNOWLEDGEMENT                              -->
 <!-- ========================================================================= -->
 <div class="page">
   <h1>Declaration of Originality</h1>
-
   <p>
-    I, <strong>Haardik Goel</strong>, a student of <strong>Master of Computer Applications, MCA 1 (B)</strong>, Enrollment Number <strong>09415504426</strong>, hereby declare that the minor project final report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong>, submitted to Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC (VIPS-TC), affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of my original research, design, and software implementation carried out under the esteemed guidance of my mentor, <strong>Dr. Cosmena Mahapatra</strong>.
+    I, <strong>Haardik Goel</strong>, student of Master of Computer Applications (MCA), Semester 1, Section B, Enrollment Number <strong>09415504426</strong>, at Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies &ndash; Technical Campus (VIPS-TC), New Delhi, hereby declare that the minor project report titled:
+  </p>
+  <div style="text-align: center; font-weight: bold; font-size: 12pt; margin: 15px 0; color: #0f172a;">
+    &ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;
+  </div>
+  <p>
+    is a bonafide record of independent software development, architectural design, algorithmic formulation, and empirical testing executed by me under the continuous mentorship of <strong>Dr. Cosmena Mahapatra</strong>. I further declare that all algorithms, database schemas, test cases, and empirical benchmark evaluations represent original work, and any third-party software libraries or research citations have been duly acknowledged.
   </p>
 
-  <p>
-    I further confirm that the ideas, system designs, diagrams, processing pipelines, source code implementations, and evaluation results presented herein are genuine and have not been plagiarized or submitted for any other degree or qualification to any other educational institution or university.
-  </p>
-
-  <div class="sign-container" style="margin-top: 35px;">
-    <div class="sign-box">
-      <strong>Place:</strong> Delhi<br>
-      <strong>Date:</strong> 16th November 2026
-    </div>
+  <div class="sign-container" style="margin-top: 35px; justify-content: flex-end;">
     <div class="sign-box" style="text-align: right;">
-      <div class="sign-line" style="text-align: right;">
-        <strong>Haardik Goel</strong><br>
-        Enrollment No.: 09415504426<br>
-        MCA 1 (B), VSIT, VIPS-TC
-      </div>
+      <div class="sign-line" style="text-align: right;">Haardik Goel</div>
+      <div class="sign-sub">Enrollment No: 09415504426</div>
+      <div class="sign-sub">MCA 1 (B), VSIT, VIPS-TC</div>
     </div>
   </div>
 
-  <h1 style="margin-top: 35px;">Acknowledgement</h1>
-
+  <h1 style="margin-top: 25px;">Acknowledgement</h1>
   <p>
-    I express my profound gratitude and sincere respect to my project mentor, <strong>Dr. Cosmena Mahapatra</strong>, for her exceptional guidance, invaluable technical insights, and consistent encouragement throughout the conceptualization, development, and testing phases of the <strong>MediAssist</strong> project. Her rigorous feedback on system architecture, clinical parsing rules, and error mitigation strategies has been instrumental in the successful completion of this system.
+    I express my profound gratitude and sincere indebtedness to my faculty mentor, <strong>Dr. Cosmena Mahapatra</strong>, for her invaluable guidance, rigorous critiques, and continuous technical encouragement throughout the design and execution of this minor project. Her insights on healthcare informatics, data modeling, and academic presentation standards have been instrumental to the realization of this system.
   </p>
-
   <p>
-    I also extend my heartfelt thanks to the leadership and faculty of the <strong>Vivekananda School of Information Technology (VSIT)</strong>, VIPS-TC, for fostering an enriching academic ecosystem equipped with the requisite technical resources, laboratories, and developmental tools to undertake this endeavor.
+    I extend my respectful gratitude to <strong>Prof. (Dr.) Supriya Madan</strong>, Dean, VSIT, for cultivating an exceptional research and computing environment at VIPS-TC. I am also thankful to the faculty members of the Department of Computer Applications for their pedagogical support, and to my family and peers for their unwavering encouragement.
   </p>
-
-  <p>
-    Lastly, I am deeply indebted to my family and peers for their continuous moral support, patience, and motivation during the intensive software engineering and evaluation iterations of this minor project.
-  </p>
-
-  <div style="text-align: right; margin-top: 20px;">
-    <strong>Haardik Goel</strong><br>
-    MCA 1 (B), Roll No. 09415504426
-  </div>
 </div>
 
 <!-- ========================================================================= -->
@@ -513,29 +522,28 @@ html_content = f"""<!DOCTYPE html>
 <!-- ========================================================================= -->
 <div class="page">
   <h1>Abstract</h1>
-
   <p>
-    Medication non-adherence remains one of the most critical challenges confronting global public healthcare systems. According to the World Health Organization (WHO), nearly 50% of patients with chronic illnesses fail to adhere strictly to their prescribed medical regimens, resulting in preventable disease progressions, increased hospital readmission rates, and substantial economic burdens. A predominant driver of this non-adherence is the inherent illegibility, complexity, and ambiguity of handwritten or densely structured medical prescriptions, which patients struggle to comprehend, remember, and schedule accurately.
+    Medication non-adherence is recognized by the World Health Organization (WHO) as an pervasive healthcare challenge, with approximately 50% of patients failing to take long-term pharmacotherapies as prescribed. Non-adherence leads to severe disease exacerbation, preventable hospital readmissions, and elevated healthcare expenditure. Primary drivers include handwritten prescription illegibility, intricate multi-drug regimens with conflicting daily timings, cognitive burden in geriatric cohorts, and the lack of accessible, closed-loop reminder systems.
   </p>
-
   <p>
-    To resolve these interrelated challenges, this project presents <strong>MediAssist</strong>, an integrated, intelligent, web-based healthcare assistant designed to convert raw prescription photographs into verified, structured, and clinically synchronized medication regimens. The platform employs a multi-tiered pipeline:
+    This project presents <strong>MediAssist</strong>, an accessible, full-stack medication adherence platform engineered to bridge the clinical gap between physician prescription and daily patient compliance. MediAssist integrates an automated image processing and Optical Character Recognition (OCR) pipeline (combining OpenCV client-side canvas optimization, Tesseract OCR, and EasyOCR) with an intelligent Natural Language Processing (NLP) clinical parsing engine built upon <em>RapidFuzz</em>. The parser interprets complex doctor shorthand (e.g., OD, BD, TDS, QID, HS, SOS, 1-0-1), dosage units (mg, ml, IU), and duration windows, mapping them into structured daily reminder schedules.
   </p>
-
+  <p>
+    MediAssist incorporates a strict <strong>human-in-the-loop review gateway</strong>, mandating patient verification before clinical schedules are committed. The platform features:
+  </p>
   <ul>
-    <li><strong>Adaptive Preprocessing & Dual-Engine OCR:</strong> Leverages OpenCV image enhancements (bilateral filtering, Gaussian blur, and Otsu binarization) coupled with Tesseract OCR (with fallback to Google Gemini Vision for dense handwritten scripts), achieving sub-second extraction latencies (&lt;0.28 seconds).</li>
-    <li><strong>NLP & Fuzzy Regimen Parsing:</strong> Employs a deterministic NLP engine with RapidFuzz token matching to identify 113+ standardized clinical formulations, extract dosage strengths, and interpret physician notations (e.g., OD, BD, TDS, HS, 1-0-1, 1-0-0) into precise daily dose timestamps (08:00, 13:00, 20:00, 22:00).</li>
-    <li><strong>Human-in-the-Loop Verification & Secure Vault:</strong> Ensures medical safety by requiring an explicit review step before data commitment. Approved schedules are permanently isolated in a relational vault conforming to India's Digital Personal Data Protection (DPDP) Act 2023.</li>
-    <li><strong>Interactive Timeline, AI Synthesis & Reminders:</strong> Integrates Google Gemini 1.5 Flash for contextual meal-timing synthesis, provides browser Web Push reminders with Taken/Skip/Snooze state tracking, and incorporates an interactive calendar for dose logging.</li>
-    <li><strong>Medicine Locator:</strong> Provides direct hyperlinks to online procurement (Tata 1mg) and a Leaflet/Google Maps interface for nearby pharmacy discovery.</li>
+    <li><strong>Voice Integration Engine (MediVoice):</strong> Hands-free bidirectional voice control via Web Speech API and Speech Synthesis, enabling vocal regimen queries and speech-directed dose logging.</li>
+    <li><strong>Generative AI Guidance:</strong> Integration with Google Gemini 1.5 Flash for contextual regimen summaries, food timing instructions, and contraindication screening.</li>
+    <li><strong>Interactive Calendar Vault:</strong> Day-by-day historical adherence tracking, color-coded status badges (Taken, Pending, Skipped), and multi-select batch deletion.</li>
+    <li><strong>Web Push Notifications:</strong> Standards-based push reminders delivered via Service Workers across desktop and mobile browsers.</li>
+    <li><strong>Medicine Locator:</strong> Direct hyperlinks to online procurement (Tata 1mg) and Leaflet/OpenStreetMap radar for nearby pharmacy discovery.</li>
   </ul>
-
   <p>
-    The entire system was subjected to an exhaustive 112-point automated test suite encompassing unit, integration, security, and dataset evaluation across 10 real-world prescription batches (yielding 42 extracted medicines), achieving a <strong>100% pass rate (Grade A+)</strong>. The project successfully demonstrates an accessible, privacy-preserving, and clinically viable solution for modern patient self-care.
+    The entire system was subjected to an exhaustive 112-point automated test suite encompassing unit, integration, security, and dataset evaluation across 10 real-world prescription batches (yielding 42 extracted medicines), achieving a <strong>100% pass rate (Grade A+)</strong>.
   </p>
 
   <div class="callout-box">
-    <strong>Index Terms</strong> &mdash; Prescription digitization, Optical Character Recognition (OCR), Medication adherence, Natural Language Processing (NLP), RapidFuzz, Web Push API, Google Gemini AI, DPDP Act 2023, Leaflet Maps, Responsive UI.
+    <strong>Index Terms</strong> &mdash; Prescription digitization, Optical Character Recognition (OCR), Medication adherence, Natural Language Processing (NLP), RapidFuzz, Web Speech API, Voice Assistant, Google Gemini AI, DPDP Act 2023, Leaflet Maps, Responsive UI.
   </div>
 </div>
 
@@ -546,10 +554,10 @@ html_content = f"""<!DOCTYPE html>
   <h1>Table of Contents</h1>
 
   <div class="toc-item"><span class="toc-title">Certificate of Approval</span><span>i</span></div>
-  <div class="toc-item"><span class="toc-title">Declaration of Originality</span><span>ii</span></div>
-  <div class="toc-item"><span class="toc-title">Acknowledgement</span><span>ii</span></div>
+  <div class="toc-item"><span class="toc-title">Declaration of Originality & Acknowledgement</span><span>ii</span></div>
   <div class="toc-item"><span class="toc-title">Abstract & Index Terms</span><span>iii</span></div>
-  <div class="toc-item"><span class="toc-title">List of Figures & Tables</span><span>iv</span></div>
+  <div class="toc-item"><span class="toc-title">Table of Contents</span><span>iv</span></div>
+  <div class="toc-item"><span class="toc-title">List of Figures & Tables</span><span>v</span></div>
 
   <div class="toc-item"><span class="toc-title">Chapter 1: Introduction</span><span>1</span></div>
   <div class="toc-item"><span class="toc-sub">1.1 Background & Clinical Context</span><span>1</span></div>
@@ -563,52 +571,65 @@ html_content = f"""<!DOCTYPE html>
   <div class="toc-item"><span class="toc-sub">2.3 Gap Analysis</span><span>4</span></div>
   <div class="toc-item"><span class="toc-sub">2.4 Literature Survey of Core Technologies</span><span>4</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 3: Objectives & Scope of the Project</span><span>6</span></div>
-  <div class="toc-item"><span class="toc-sub">3.1 Primary Objectives</span><span>6</span></div>
-  <div class="toc-item"><span class="toc-sub">3.2 Secondary Objectives</span><span>6</span></div>
-  <div class="toc-item"><span class="toc-sub">3.3 Scope: In-Scope, Out-of-Scope, and Constraints</span><span>7</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 3: Objectives & Scope of the Project</span><span>5</span></div>
+  <div class="toc-item"><span class="toc-sub">3.1 Primary Objectives</span><span>5</span></div>
+  <div class="toc-item"><span class="toc-sub">3.2 Secondary Objectives</span><span>5</span></div>
+  <div class="toc-item"><span class="toc-sub">3.3 Scope: In-Scope, Out-of-Scope, and Constraints</span><span>6</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 4: System Requirements Specification (SRS)</span><span>8</span></div>
-  <div class="toc-item"><span class="toc-sub">4.1 Functional Requirements (FR1 &ndash; FR10)</span><span>8</span></div>
-  <div class="toc-item"><span class="toc-sub">4.2 Non-Functional Requirements (NFR1 &ndash; NFR8)</span><span>9</span></div>
-  <div class="toc-item"><span class="toc-sub">4.3 Technology Stack & Architectural Decisions</span><span>9</span></div>
-  <div class="toc-item"><span class="toc-sub">4.4 Hardware & Software Operating Requirements</span><span>10</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 4: System Requirements Specification (SRS)</span><span>7</span></div>
+  <div class="toc-item"><span class="toc-sub">4.1 Functional Requirements (FR1 &ndash; FR10)</span><span>7</span></div>
+  <div class="toc-item"><span class="toc-sub">4.2 Non-Functional Requirements (NFR1 &ndash; NFR8)</span><span>8</span></div>
+  <div class="toc-item"><span class="toc-sub">4.3 Technology Stack & Architectural Decisions</span><span>8</span></div>
+  <div class="toc-item"><span class="toc-sub">4.4 Hardware & Software Operating Requirements</span><span>9</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 5: System Architecture & Database Design</span><span>11</span></div>
-  <div class="toc-item"><span class="toc-sub">5.1 Layered System Architecture (Presentation, App, Data)</span><span>11</span></div>
-  <div class="toc-item"><span class="toc-sub">5.2 Data Flow Modeling (Level 0 and Level 1 DFD)</span><span>12</span></div>
-  <div class="toc-item"><span class="toc-sub">5.3 Entity-Relationship (ER) Schema Modeling</span><span>13</span></div>
-  <div class="toc-item"><span class="toc-sub">5.4 Comprehensive Data Dictionary</span><span>14</span></div>
-  <div class="toc-item"><span class="toc-sub">5.5 Security, Privacy & DPDP Act 2023 Compliance</span><span>15</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 5: System Architecture & Database Design</span><span>10</span></div>
+  <div class="toc-item"><span class="toc-sub">5.1 Layered System Architecture (Presentation, App, Data)</span><span>10</span></div>
+  <div class="toc-item"><span class="toc-sub">5.2 Data Flow Modeling (Level 0 and Level 1 DFD)</span><span>11</span></div>
+  <div class="toc-item"><span class="toc-sub">5.3 Entity-Relationship (ER) Schema Modeling</span><span>12</span></div>
+  <div class="toc-item"><span class="toc-sub">5.4 Comprehensive Data Dictionary</span><span>13</span></div>
+  <div class="toc-item"><span class="toc-sub">5.5 Security, Privacy & DPDP Act 2023 Compliance</span><span>14</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 6: Methodology & Implementation Details</span><span>16</span></div>
-  <div class="toc-item"><span class="toc-sub">6.1 Development Methodology (Agile Scrum)</span><span>16</span></div>
-  <div class="toc-item"><span class="toc-sub">6.2 End-to-End Processing Pipeline</span><span>16</span></div>
-  <div class="toc-item"><span class="toc-sub">6.3 Image Preprocessing Algorithms</span><span>17</span></div>
-  <div class="toc-item"><span class="toc-sub">6.4 NLP Clinical Parsing & Doctor Shorthand Engine</span><span>18</span></div>
-  <div class="toc-item"><span class="toc-sub">6.5 AI Clinical Guidance Integration (Google Gemini)</span><span>19</span></div>
-  <div class="toc-item"><span class="toc-sub">6.6 Web Push Engine, Calendar Vault & UI Redesign</span><span>20</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 6: Methodology & Implementation Details</span><span>15</span></div>
+  <div class="toc-item"><span class="toc-sub">6.1 Development Methodology (Agile Scrum)</span><span>15</span></div>
+  <div class="toc-item"><span class="toc-sub">6.2 End-to-End Processing Pipeline</span><span>15</span></div>
+  <div class="toc-item"><span class="toc-sub">6.3 Image Preprocessing Algorithms</span><span>16</span></div>
+  <div class="toc-item"><span class="toc-sub">6.4 NLP Clinical Parsing & Doctor Shorthand Engine</span><span>16</span></div>
+  <div class="toc-item"><span class="toc-sub">6.5 AI Clinical Guidance Integration (Google Gemini)</span><span>17</span></div>
+  <div class="toc-item"><span class="toc-sub">6.6 Voice Integration & Hands-Free Interaction Engine (MediVoice)</span><span>17</span></div>
+  <div class="toc-item"><span class="toc-sub">6.7 Modern Clinical Aesthetic & Interactive Vault UI</span><span>18</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 7: Operational Workflow & State Transitions</span><span>21</span></div>
-  <div class="toc-item"><span class="toc-sub">7.1 Overall System Operational Workflow</span><span>21</span></div>
-  <div class="toc-item"><span class="toc-sub">7.2 Medication Reminder Lifecycle & State Transitions</span><span>22</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 7: Operational Workflow & State Transitions</span><span>19</span></div>
+  <div class="toc-item"><span class="toc-sub">7.1 Overall System Operational Workflow</span><span>19</span></div>
+  <div class="toc-item"><span class="toc-sub">7.2 Medication Reminder Lifecycle & State Transitions</span><span>20</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 8: Testing, Verification & Experimental Evaluation</span><span>23</span></div>
-  <div class="toc-item"><span class="toc-sub">8.1 Multi-Tier Testing Strategy</span><span>23</span></div>
-  <div class="toc-item"><span class="toc-sub">8.2 Quantitative Evaluation Metrics & Latency Benchmarks</span><span>23</span></div>
-  <div class="toc-item"><span class="toc-sub">8.3 Prescription Dataset Validation (10 Batches, 42 Meds)</span><span>24</span></div>
-  <div class="toc-item"><span class="toc-sub">8.4 Comprehensive System Scorecard (112/112 &ndash; Grade A+)</span><span>25</span></div>
-  <div class="toc-item"><span class="toc-sub">8.5 Test Case Execution Matrix (TC1 &ndash; TC12)</span><span>26</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 8: User Interface Architecture & Screen Demonstrations</span><span>21</span></div>
+  <div class="toc-item"><span class="toc-sub">8.1 Modern White & Orange Aesthetic and Design System</span><span>21</span></div>
+  <div class="toc-item"><span class="toc-sub">8.2 Homepage & Hero Presentation (Fig. 5)</span><span>21</span></div>
+  <div class="toc-item"><span class="toc-sub">8.3 5-Stage Patient Workflow & Guidance Carousel (Fig. 6)</span><span>21</span></div>
+  <div class="toc-item"><span class="toc-sub">8.4 Ingestion Hub: Dual Camera & Gallery Upload (Fig. 7)</span><span>22</span></div>
+  <div class="toc-item"><span class="toc-sub">8.5 AI Clinical Guidance Card with Voice Read-Aloud (Fig. 8)</span><span>22</span></div>
+  <div class="toc-item"><span class="toc-sub">8.6 Interactive Medication Adherence Timeline & History (Fig. 9)</span><span>23</span></div>
+  <div class="toc-item"><span class="toc-sub">8.7 Multi-Select Batch Schedule Management & Deletion (Fig. 10)</span><span>23</span></div>
+  <div class="toc-item"><span class="toc-sub">8.8 Real-Time MediVoice Voice Assistant Dialog (Fig. 11)</span><span>24</span></div>
+  <div class="toc-item"><span class="toc-sub">8.9 Integrated Medicine Locator & Pharmacy Radar (Fig. 12)</span><span>24</span></div>
+  <div class="toc-item"><span class="toc-sub">8.10 Faculty Mentor & Student Attribution Integration</span><span>24</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 9: Project Timeline & Limitations</span><span>27</span></div>
-  <div class="toc-item"><span class="toc-sub">9.1 Academic Project Timeline & Deliverables</span><span>27</span></div>
-  <div class="toc-item"><span class="toc-sub">9.2 Current System Limitations</span><span>27</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 9: Testing, Verification & Experimental Evaluation</span><span>25</span></div>
+  <div class="toc-item"><span class="toc-sub">9.1 Multi-Tier Testing Strategy</span><span>25</span></div>
+  <div class="toc-item"><span class="toc-sub">9.2 Quantitative Evaluation Metrics & Latency Benchmarks</span><span>25</span></div>
+  <div class="toc-item"><span class="toc-sub">9.3 Prescription Dataset Validation (10 Batches, 42 Meds)</span><span>26</span></div>
+  <div class="toc-item"><span class="toc-sub">9.4 Comprehensive System Scorecard (112/112 &ndash; Grade A+)</span><span>27</span></div>
+  <div class="toc-item"><span class="toc-sub">9.5 Test Cases Specification Matrix (TC1 &ndash; TC12)</span><span>28</span></div>
 
-  <div class="toc-item"><span class="toc-title">Chapter 10: Future Scope & Conclusion</span><span>28</span></div>
-  <div class="toc-item"><span class="toc-sub">10.1 Future Scope & Research Horizons</span><span>28</span></div>
-  <div class="toc-item"><span class="toc-sub">10.2 Conclusion</span><span>28</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 10: Project Timeline & Limitations</span><span>29</span></div>
+  <div class="toc-item"><span class="toc-sub">10.1 Academic Project Timeline & Deliverables</span><span>29</span></div>
+  <div class="toc-item"><span class="toc-sub">10.2 Current System Limitations</span><span>29</span></div>
 
-  <div class="toc-item"><span class="toc-title">References</span><span>29</span></div>
+  <div class="toc-item"><span class="toc-title">Chapter 11: Future Scope & Conclusion</span><span>30</span></div>
+  <div class="toc-item"><span class="toc-sub">11.1 Future Scope & Research Horizons</span><span>30</span></div>
+  <div class="toc-item"><span class="toc-sub">11.2 Conclusion</span><span>30</span></div>
+
+  <div class="toc-item"><span class="toc-title">References</span><span>31</span></div>
 </div>
 
 <!-- ========================================================================= -->
@@ -618,24 +639,32 @@ html_content = f"""<!DOCTYPE html>
   <h1>List of Figures & Tables</h1>
 
   <h2>List of Figures</h2>
-  <div class="toc-item"><span>Fig. 1. Layered system architecture of MediAssist (Presentation, App, Data Layers)</span><span>11</span></div>
-  <div class="toc-item"><span>Fig. 2. Level-1 Data Flow Diagram (DFD) showing 5 primary processes and 4 datastores</span><span>12</span></div>
-  <div class="toc-item"><span>Fig. 3. Entity-Relationship (ER) diagram of the MediAssist database schema</span><span>13</span></div>
-  <div class="toc-item"><span>Fig. 4. Complete operational workflow of the MediAssist human-in-the-loop pipeline</span><span>21</span></div>
+  <div class="toc-item"><span>Fig. 1. Layered system architecture of MediAssist (Presentation, App, Data Layers)</span><span>10</span></div>
+  <div class="toc-item"><span>Fig. 2. Level-1 Data Flow Diagram (DFD) showing 5 primary processes and 4 datastores</span><span>11</span></div>
+  <div class="toc-item"><span>Fig. 3. Entity-Relationship (ER) diagram of the MediAssist database schema</span><span>12</span></div>
+  <div class="toc-item"><span>Fig. 4. Complete operational workflow of the MediAssist human-in-the-loop pipeline</span><span>19</span></div>
+  <div class="toc-item"><span>Fig. 5. Homepage & Hero Section featuring White & Orange clinical design and navigation</span><span>21</span></div>
+  <div class="toc-item"><span>Fig. 6. How MediAssist Works: 5-Stage interactive patient workflow carousel</span><span>21</span></div>
+  <div class="toc-item"><span>Fig. 7. Patient Prescription Ingestion Hub with dual camera capture and gallery upload</span><span>22</span></div>
+  <div class="toc-item"><span>Fig. 8. AI Clinical Guidance Card powered by Gemini with &ldquo;Listen to Regimen&rdquo; voice synthesis</span><span>22</span></div>
+  <div class="toc-item"><span>Fig. 9. Interactive Medication Adherence Timeline & historical daily log calendar</span><span>23</span></div>
+  <div class="toc-item"><span>Fig. 10. Multi-select batch medication schedule table with active adherence scoring</span><span>23</span></div>
+  <div class="toc-item"><span>Fig. 11. Real-time MediVoice conversational voice assistant modal with live waveform</span><span>24</span></div>
+  <div class="toc-item"><span>Fig. 12. Integrated Medicine Locator radar map with direct Tata 1mg procurement links</span><span>24</span></div>
 
-  <h2 style="margin-top: 25px;">List of Tables</h2>
+  <h2 style="margin-top: 18px;">List of Tables</h2>
   <div class="toc-item"><span>Table I. Project metadata and submission details</span><span>Title Page</span></div>
   <div class="toc-item"><span>Table II. Comparison between conventional alarms and the MediAssist platform</span><span>3</span></div>
   <div class="toc-item"><span>Table III. Architectural module inputs, core algorithms, and expected outputs</span><span>5</span></div>
-  <div class="toc-item"><span>Table IV. Functional requirements specification (FR1 &ndash; FR10)</span><span>8</span></div>
-  <div class="toc-item"><span>Table V. MediAssist technical stack summary</span><span>9</span></div>
-  <div class="toc-item"><span>Table VI. Hardware and software deployment specifications</span><span>10</span></div>
-  <div class="toc-item"><span>Table VII. Relational database entities and cardinalities</span><span>13</span></div>
-  <div class="toc-item"><span>Table VIII. Comprehensive relational data dictionary</span><span>14</span></div>
-  <div class="toc-item"><span>Table IX. Doctor shorthand frequency mapping and scheduled dose slots</span><span>18</span></div>
-  <div class="toc-item"><span>Table X. Medication reminder state transition lifecycle matrix</span><span>22</span></div>
-  <div class="toc-item"><span>Table XI. System test cases and evaluation results matrix (TC1 &ndash; TC12)</span><span>26</span></div>
-  <div class="toc-item"><span>Table XII. Academic minor project execution schedule and milestone timeline</span><span>27</span></div>
+  <div class="toc-item"><span>Table IV. Functional requirements specification (FR1 &ndash; FR10)</span><span>7</span></div>
+  <div class="toc-item"><span>Table V. MediAssist technical stack summary</span><span>8</span></div>
+  <div class="toc-item"><span>Table VI. Hardware and software deployment specifications</span><span>9</span></div>
+  <div class="toc-item"><span>Table VII. Relational database entities and cardinalities</span><span>12</span></div>
+  <div class="toc-item"><span>Table VIII. Comprehensive relational data dictionary</span><span>13</span></div>
+  <div class="toc-item"><span>Table IX. Doctor shorthand frequency mapping and scheduled dose slots</span><span>16</span></div>
+  <div class="toc-item"><span>Table X. Medication reminder state transition lifecycle matrix</span><span>20</span></div>
+  <div class="toc-item"><span>Table XI. System test cases and evaluation results matrix (TC1 &ndash; TC12)</span><span>28</span></div>
+  <div class="toc-item"><span>Table XII. Academic minor project execution schedule and milestone timeline</span><span>29</span></div>
 </div>
 
 <!-- ========================================================================= -->
@@ -678,7 +707,7 @@ html_content = f"""<!DOCTYPE html>
 
   <h2>1.4 Organization of the Report</h2>
   <p>
-    This minor project final report is organized into eleven structured chapters. Chapter 2 details the problem statement, literature survey, and gap analysis. Chapter 3 defines the project's primary/secondary objectives and boundary scope. Chapter 4 provides the complete System Requirements Specification (SRS) and technology stack. Chapter 5 articulates the layered architecture, DFDs, ER schema, and data dictionary. Chapter 6 examines the algorithmic methodology and implementation pipelines. Chapter 7 details the operational workflow and state transitions. Chapter 8 provides an exhaustive review of test results (112/112 score, Grade A+) and experimental benchmarks. Chapter 9 outlines project timelines and limitations. Chapter 10 presents future research directions and concluding remarks, followed by formal IEEE references.
+    This minor project final report is organized into eleven structured chapters. Chapter 2 details the problem statement, literature survey, and gap analysis. Chapter 3 defines the project's primary/secondary objectives and boundary scope. Chapter 4 provides the complete System Requirements Specification (SRS) and technology stack. Chapter 5 articulates the layered architecture, DFDs, ER schema, and data dictionary. Chapter 6 examines the algorithmic methodology, NLP clinical parsing, and Voice engine implementation. Chapter 7 details the operational workflow and state transitions. Chapter 8 provides comprehensive user interface demonstrations for Figures 5 to 12. Chapter 9 details the 112/112 test scorecard and benchmark evaluation. Chapter 10 presents timelines and limitations, and Chapter 11 concludes the report with future scope and IEEE references.
   </p>
 </div>
 
@@ -690,14 +719,8 @@ html_content = f"""<!DOCTYPE html>
 
   <h2>2.1 Problem Description</h2>
   <p>
-    The workflow of paper-based prescription handling is fundamentally error-prone. Patients receive physical prescription sheets containing abbreviated drug nomenclature, dosage units (mg, ml, IU), frequency shorthand, and duration windows. In the absence of an immediate, intelligible digital translation, patients frequently:
+    The workflow of paper-based prescription handling is fundamentally error-prone. Patients receive physical prescription sheets containing abbreviated drug nomenclature, dosage units (mg, ml, IU), frequency shorthand, and duration windows. In the absence of an immediate, intelligible digital translation, patients frequently confuse morning and evening doses, omit midday doses, prematurely terminate therapies, or misplace physical slips.
   </p>
-  <ul>
-    <li>Confuse morning and evening doses;</li>
-    <li>Omit midday doses due to workday distractions;</li>
-    <li>Prematurely terminate antibiotic or maintenance therapies;</li>
-    <li>Misplace physical prescription slips, losing track of their ongoing clinical history.</li>
-  </ul>
 
   <h2>2.2 Limitations of Existing Approaches</h2>
   <p>
@@ -708,76 +731,56 @@ html_content = f"""<!DOCTYPE html>
   <table class="content-table">
     <thead>
       <tr>
-        <th>Capability / Feature</th>
-        <th>Manual / Generic Smartphone Alarms</th>
-        <th>Commercial Native Pill Apps</th>
-        <th>Proposed MediAssist Platform</th>
+        <th style="width: 25%;">Evaluation Parameter</th>
+        <th style="width: 37%;">Conventional Approaches / Generic Alarms</th>
+        <th style="width: 38%;">Proposed MediAssist Platform</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Prescription Ingestion</strong></td>
-        <td>None; requires manual entry of alarm times.</td>
-        <td>Manual text entry or locked behind premium subscriptions.</td>
-        <td>Instant camera capture / file upload with sub-second OCR.</td>
+        <td><strong>Input Mechanism</strong></td>
+        <td>Manual text entry per drug; prone to typing errors and tedious setup.</td>
+        <td>Automated multi-engine OCR with camera/gallery ingestion and client canvas scaling.</td>
       </tr>
       <tr>
-        <td><strong>Frequency Interpretation</strong></td>
-        <td>None; user must manually compute recurrence.</td>
-        <td>Limited static time pickers; cannot parse OD, BD, 1-0-1.</td>
-        <td>Automated rule-based conversion into exact daily dose slots.</td>
+        <td><strong>Shorthand Parsing</strong></td>
+        <td>None; requires users to manually decode medical abbreviations.</td>
+        <td>Automatic rule-based & fuzzy NLP parsing (OD, BD, TDS, QID, HS, SOS, 1-0-1).</td>
       </tr>
       <tr>
-        <td><strong>Fuzzy Medicine Matching</strong></td>
-        <td>None.</td>
-        <td>Often restricted to Western/US drug compendia.</td>
-        <td>RapidFuzz matching against 113+ common Indian clinical formulations.</td>
+        <td><strong>Clinical Guidance</strong></td>
+        <td>Basic buzzer or chime without instructions.</td>
+        <td>Google Gemini 1.5 Flash AI clinical guidance with voice read-aloud playback.</td>
       </tr>
       <tr>
-        <td><strong>AI Clinical Guidance</strong></td>
-        <td>None.</td>
-        <td>Generic text snippets without context.</td>
-        <td>Google Gemini live synthesis for meal-time regimen coordination.</td>
+        <td><strong>Voice Interaction</strong></td>
+        <td>Absent in almost all existing medication trackers.</td>
+        <td>Bidirectional MediVoice voice control (schedule queries, hands-free dose logging).</td>
       </tr>
       <tr>
-        <td><strong>Cross-Platform Access</strong></td>
-        <td>Tied to individual physical device hardware.</td>
-        <td>Heavy mobile OS installs; no cross-browser sync.</td>
-        <td>Zero-install responsive web app (mobile, tablet, desktop).</td>
+        <td><strong>Adherence Audit Trail</strong></td>
+        <td>Ephemeral alarms; no longitudinal history or adherence calculation.</td>
+        <td>Permanent dose audit trail with interactive calendar and compliance metrics.</td>
       </tr>
       <tr>
         <td><strong>Pharmacy Integration</strong></td>
-        <td>None.</td>
-        <td>Commercial affiliate advertisements.</td>
-        <td>One-click Tata 1mg direct links and Google Maps locator.</td>
+        <td>Isolated from fulfillment channels.</td>
+        <td>Integrated Tata 1mg hyperlinks and Leaflet map discovery for nearby pharmacies.</td>
       </tr>
     </tbody>
   </table>
 
   <h2>2.3 Gap Analysis</h2>
   <p>
-    The gap analysis indicates that while high-end hospital information systems (HIS) provide electronic health records, no lightweight, accessible, and privacy-respecting consumer tool bridges the everyday gap between a patient photographing a prescription slip and receiving automated, context-aware reminders coupled with fulfillment assistance. MediAssist explicitly addresses this void.
+    Existing commercial applications (e.g., Medisafe, MyTherapy) operate primarily as closed native mobile ecosystems with subscription paywalls, heavy cloud telemetry, and mandatory manual data entry. None provide an integrated pipeline bridging camera-based prescription ingestion, fuzzy shorthand extraction, generative clinical guidance, bidirectional voice commands, and zero-install browser push notifications in a privacy-compliant framework.
   </p>
 
   <h2>2.4 Literature Survey of Core Technologies</h2>
-  <h3>2.4.1 Optical Character Recognition (OCR)</h3>
   <p>
-    Tesseract OCR, initially engineered by Hewlett-Packard and subsequently maintained by Google, represents the state-of-the-art open-source text extraction engine utilizing multi-layer LSTM neural networks [3]. In MediAssist, Tesseract v4.1.1 is integrated via <code>pytesseract</code>. To accommodate challenging handwritten prescriptions, the pipeline is augmented with Google Gemini Vision API fallback.
+    <strong>Optical Character Recognition:</strong> Smith et al. [3] introduced the open-source Tesseract OCR architecture, leveraging LSTM neural networks for line recognition. In healthcare, OCR accuracy degrades under uneven lighting and low resolution. JaidedAI [4] addressed these challenges via EasyOCR using CRAFT text detection and ResNet feature extraction. MediAssist employs a hybrid OCR strategy with OpenCV adaptive binarization (Otsu [5]).
   </p>
-
-  <h3>2.4.2 Image Preprocessing & Binarization</h3>
   <p>
-    Raw mobile camera uploads inevitably contain non-uniform lighting, shadows, paper wrinkles, and optical noise. Otsu's thresholding algorithm [5] automatically calculates an optimal binarization threshold by minimizing intra-class variance. Combined with OpenCV [6] bilateral noise filtering and Gaussian smoothing, the OCR character recognition rate improves significantly.
-  </p>
-
-  <h3>2.4.3 Natural Language Processing & Fuzzy String Matching</h3>
-  <p>
-    OCR outputs often contain minor character corruptions (e.g., &ldquo;Paracetarnol&rdquo; instead of &ldquo;Paracetamol&rdquo;). The Levenshtein distance metric, efficiently implemented in C++ via the RapidFuzz library [8], computes token-sort similarity ratios, enabling robust fuzzy correction with confidence scoring above 80%.
-  </p>
-
-  <h3>2.4.4 Push Notifications & Browser Scheduling</h3>
-  <p>
-    The W3C Push API and Service Workers [9] allow web applications to receive server-dispatched push events and trigger system-level desktop/mobile banner alerts even when the main website tab is inactive. MediAssist utilizes this standard for deterministic, battery-efficient reminder delivery.
+    <strong>String Matching in Medical Informatics:</strong> RapidFuzz (Bachmann [8]) implements Levenshtein and Jaro-Winkler distance metrics, achieving C++ optimized evaluation speeds. This enables real-time spelling correction for truncated medical handwriting.
   </p>
 </div>
 
@@ -788,53 +791,78 @@ html_content = f"""<!DOCTYPE html>
   <h1>Chapter 3: Objectives & Scope of the Project</h1>
 
   <h2>3.1 Primary Objectives</h2>
-  <p>
-    The core objective of the MediAssist minor project is to design, implement, and validate an intelligent web platform that automates the translation of paper prescriptions into actionable therapeutic routines. The primary engineering objectives comprise:
-  </p>
-  <ul>
-    <li><strong>Automated Digitization:</strong> Ingest prescription images via camera capture or file upload and extract textual data within 5 seconds using an OpenCV preprocessing and OCR pipeline.</li>
-    <li><strong>Clinical Entity Extraction:</strong> Parse raw extracted text to detect medication names, dosage strengths, administration frequencies, and durations using regex and fuzzy matching against a verified clinical lexicon.</li>
-    <li><strong>Shorthand Translation:</strong> Convert standard clinical shorthand (OD, BD, TDS, QID, HS, 1-0-1, 1-0-0) into discrete daily dose timestamps (08:00 Morning, 13:00 Afternoon, 20:00 Evening, 22:00 Bedtime).</li>
-    <li><strong>Human Verification Gateway:</strong> Implement an editable review interface allowing users to audit, adjust, or supplement extracted medication entities prior to permanent database commitment.</li>
-    <li><strong>Multi-Action Reminders:</strong> Implement a client-side and server-synchronized notification engine allowing users to mark doses as Taken, Skipped, or Snoozed.</li>
-    <li><strong>Medicine Procurement Support:</strong> Seamlessly integrate direct links to trusted online pharmacies (Tata 1mg) and provide an interactive Google Maps/Leaflet interface for local pharmacy discovery.</li>
-  </ul>
+  <ol>
+    <li><strong>Automated Prescription Digitization:</strong> Develop an automated pipeline capable of accepting photographed prescriptions, executing image preprocessing (grayscale, noise reduction, thresholding), and performing dual-engine OCR (Tesseract and EasyOCR) to extract raw textual lines within sub-second latencies (&le; 1.0s).</li>
+    <li><strong>Intelligent Medical Shorthand Parsing:</strong> Construct a rule-based and fuzzy-matching clinical NLP parser (leveraging RapidFuzz) to identify drug names, strengths (e.g., 500mg, 10ml), dosage frequencies (OD, BD, TDS, QID, HS, SOS, 1-0-1), and treatment durations from noisy text.</li>
+    <li><strong>Human-in-the-Loop Verification Interface:</strong> Implement an editable review interface enabling patients to verify, modify, or add medications prior to persisting records into the personal health vault.</li>
+    <li><strong>Deterministic Multi-Slot Reminder Engine:</strong> Build a scheduling module that automatically translates clinical frequencies into discrete daily dose timestamps (08:00, 14:00, 20:00, 22:00) and dispatches Web Push notifications via Service Workers.</li>
+    <li><strong>Hands-Free Bidirectional Voice Assistant (MediVoice):</strong> Integrate the W3C Web Speech API and Speech Synthesis to enable hands-free dose logging, audible regimen read-aloud, and speech-directed navigation.</li>
+  </ol>
 
   <h2>3.2 Secondary Objectives</h2>
   <ul>
-    <li>Provide an AI-powered clinical guidance engine leveraging Google Gemini to synthesize multi-drug timing instructions into a coherent, meal-synchronized daily schedule.</li>
-    <li>Deliver an interactive calendar interface maintaining an immutable chronological audit trail of taken and skipped medication history.</li>
-    <li>Implement a batch deletion facility allowing users to manage their active medication vault with multi-select convenience.</li>
-    <li>Ensure full compliance with modern web accessibility guidelines, mobile-first responsive viewports, and Indian data protection standards (DPDP Act 2023).</li>
+    <li><strong>Generative AI Clinical Synthesis:</strong> Integrate Google Gemini 1.5 Flash to synthesize plain-language regimen summaries, dietary advisories (e.g., before/after meals), and potential interaction warnings.</li>
+    <li><strong>Interactive Calendar Vault & Batch Management:</strong> Provide an interactive daily adherence calendar with multi-select batch deletion capabilities.</li>
+    <li><strong>Pharmacy & Fulfillment Discovery:</strong> Embed a Medicine Locator that generates direct Tata 1mg purchase hyperlinks and renders nearby physical pharmacies on an interactive Leaflet map.</li>
   </ul>
 
-  <h2>3.3 Scope of the Project</h2>
-  <h3>3.3.1 In Scope</h3>
-  <ul>
-    <li>Web-based user registration, authentication, and session persistence across page refreshes.</li>
-    <li>Mobile camera dual-upload (native camera trigger and gallery file picker).</li>
-    <li>Image preprocessing (grayscale conversion, Gaussian denoising, Otsu adaptive thresholding).</li>
-    <li>OCR extraction via Tesseract with handwriting fallback.</li>
-    <li>Fuzzy medication matching against 113+ Indian pharmaceutical formulations.</li>
-    <li>Doctor shorthand normalization (OD, BD, TDS, HS, 1-0-1).</li>
-    <li>AI meal-timing synthesis via Google Gemini 1.5 Flash.</li>
-    <li>Web Push notifications with Taken/Skip/Snooze state tracking.</li>
-    <li>Online pharmacy integration (Tata 1mg) and nearby store locator via Google Maps.</li>
-  </ul>
+  <div class="table-title">Table III: Architectural Module Inputs, Core Algorithms, and Expected Outputs</div>
+  <table class="content-table">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Module</th>
+        <th style="width: 26%;">Input Data</th>
+        <th style="width: 28%;">Applied Algorithm / Technique</th>
+        <th style="width: 24%;">Generated Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prescription Scanner</td>
+        <td>Prescription Image (JPG, PNG)</td>
+        <td>Canvas downsampling, OpenCV bilateral filter, Otsu thresholding, Tesseract / EasyOCR</td>
+        <td>Raw digitized clinical text stream</td>
+      </tr>
+      <tr>
+        <td>Clinical Shorthand Parser</td>
+        <td>Raw digitized text</td>
+        <td>Regex token extraction, RapidFuzz fuzzy matching, frequency dictionary lookup</td>
+        <td>Structured medicine entities (Name, Strength, Slot, Duration)</td>
+      </tr>
+      <tr>
+        <td>Reminder Engine</td>
+        <td>Confirmed medicine list</td>
+        <td>Cron-style event dispatcher, VAPID Web Push protocol, Service Worker push handler</td>
+        <td>Browser push notifications with Take/Snooze/Skip buttons</td>
+      </tr>
+      <tr>
+        <td>Voice Engine (MediVoice)</td>
+        <td>Spoken audio input via mic</td>
+        <td>W3C Web Speech API, acoustic echo isolation, regex intent classifier, Speech Synthesis</td>
+        <td>Spoken audio feedback and automated UI dose logging</td>
+      </tr>
+      <tr>
+        <td>AI Clinical Guidance</td>
+        <td>Active patient drug list</td>
+        <td>Google Gemini 1.5 Flash generative prompting, prompt engineering</td>
+        <td>Natural-language regimen breakdown and food advisories</td>
+      </tr>
+      <tr>
+        <td>Medicine Locator</td>
+        <td>Medicine names, GPS coords</td>
+        <td>Overpass OpenStreetMap API, Leaflet.js rendering, Tata 1mg deep-link builder</td>
+        <td>Interactive pharmacy map and direct 1mg procurement links</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <h3>3.3.2 Out of Scope</h3>
-  <ul>
-    <li>Automated digital signing or issuing of new legal prescriptions by physicians.</li>
-    <li>Direct electronic billing, insurance claims, or commercial payment gateway processing.</li>
-    <li>Physical integration with automated smart pill-dispenser hardware.</li>
-  </ul>
-
-  <h3>3.3.3 Assumptions and Technical Constraints</h3>
-  <ul>
-    <li>The patient or caregiver possesses a smartphone, tablet, or PC with a modern web browser supporting JavaScript, Canvas, and Service Workers.</li>
-    <li>Prescriptions must be photographed with reasonable clarity and illumination.</li>
-    <li>The system operates as an assistive personal tool and does not replace professional clinical judgment.</li>
-  </ul>
+  <h2>3.3 Scope & Boundary Constraints</h2>
+  <p>
+    <strong>In-Scope:</strong> Web-based prescription ingestion, local OCR and NLP parsing, human review, SQLite relational persistence, Web Push reminders, Web Speech voice interaction, Gemini AI summary, DPDP-compliant account management.
+  </p>
+  <p>
+    <strong>Out-of-Scope:</strong> Direct electronic prescribing by registered doctors, real-time hospital EHR integration, automated chemical synthesis verification. MediAssist acts as an assistive adherence tool and does not provide formal medical diagnoses.
+  </p>
 </div>
 
 <!-- ========================================================================= -->
@@ -844,125 +872,58 @@ html_content = f"""<!DOCTYPE html>
   <h1>Chapter 4: System Requirements Specification (SRS)</h1>
 
   <h2>4.1 Functional Requirements</h2>
+  <p>
+    The functional requirements govern the behavioral capabilities of the MediAssist platform:
+  </p>
+
   <div class="table-title">Table IV: Functional Requirements Specification</div>
   <table class="content-table">
     <thead>
       <tr>
         <th style="width: 12%;">Req. ID</th>
-        <th style="width: 25%;">Requirement Category</th>
-        <th>Detailed Functional Specification</th>
+        <th style="width: 24%;">Requirement Name</th>
+        <th style="width: 64%;">Detailed Specification</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>FR1</strong></td>
-        <td>User Authentication</td>
-        <td>The system shall allow users to register with full name, email, and password, verify accounts, and log in securely.</td>
-      </tr>
-      <tr>
-        <td><strong>FR2</strong></td>
-        <td>Prescription Ingestion</td>
-        <td>The system shall accept prescription images via direct file upload or smartphone camera capture (max 8MB).</td>
-      </tr>
-      <tr>
-        <td><strong>FR3</strong></td>
-        <td>Image Preprocessing</td>
-        <td>The system shall apply bilateral filtering, Gaussian blur, and Otsu binarization to enhance text clarity.</td>
-      </tr>
-      <tr>
-        <td><strong>FR4</strong></td>
-        <td>OCR Text Extraction</td>
-        <td>The system shall extract textual lines from preprocessed images using Tesseract OCR within 5.0 seconds.</td>
-      </tr>
-      <tr>
-        <td><strong>FR5</strong></td>
-        <td>Clinical Entity Parsing</td>
-        <td>The system shall parse extracted text to identify drug names, strengths, frequencies, and durations.</td>
-      </tr>
-      <tr>
-        <td><strong>FR6</strong></td>
-        <td>Human Verification</td>
-        <td>The system shall display a mandatory review screen allowing the patient to modify extracted data before saving.</td>
-      </tr>
-      <tr>
-        <td><strong>FR7</strong></td>
-        <td>Personal Vault Storage</td>
-        <td>The system shall persist confirmed prescriptions, medicines, and dosage times in a relational database.</td>
-      </tr>
-      <tr>
-        <td><strong>FR8</strong></td>
-        <td>AI Timing Synthesis</td>
-        <td>The system shall invoke Google Gemini to generate comprehensive meal-time consumption guidelines.</td>
-      </tr>
-      <tr>
-        <td><strong>FR9</strong></td>
-        <td>Push Notifications</td>
-        <td>The system shall schedule browser notifications for each daily dose with Taken, Snooze, and Skip actions.</td>
-      </tr>
-      <tr>
-        <td><strong>FR10</strong></td>
-        <td>Medicine Locator</td>
-        <td>The system shall provide direct 1mg purchase links and render a Google Maps / Leaflet store finder.</td>
-      </tr>
+      <tr><td>FR1</td><td>User Authentication</td><td>Secure user registration and login using PBKDF2/SHA-256 password hashing and HTTP-only session cookies.</td></tr>
+      <tr><td>FR2</td><td>Dual Image Ingestion</td><td>Support both direct device camera capture and local file gallery upload with client-side canvas downsampling.</td></tr>
+      <tr><td>FR3</td><td>Image Preprocessing</td><td>Automatic grayscale conversion, bilateral denoising, and Otsu thresholding via OpenCV before OCR evaluation.</td></tr>
+      <tr><td>FR4</td><td>OCR Extraction</td><td>Dual-engine OCR (Tesseract / EasyOCR) extracting text lines with confidence scores within &le; 1.0s.</td></tr>
+      <tr><td>FR5</td><td>Clinical NLP Parsing</td><td>Extraction of drug names (matched via RapidFuzz), dosage strengths, and Latin/Indian frequencies (OD, BD, TDS, QID, HS, 1-0-1).</td></tr>
+      <tr><td>FR6</td><td>Human Verification</td><td>Interactive review interface displaying extracted tokens in editable fields for patient confirmation.</td></tr>
+      <tr><td>FR7</td><td>Dose Scheduling</td><td>Deterministic generation of daily reminder timestamps based on clinical frequency slots (08:00, 14:00, 20:00, 22:00).</td></tr>
+      <tr><td>FR8</td><td>Web Push Notifications</td><td>Standards-based VAPID Web Push dispatch delivered via Service Workers with action buttons (Take, Snooze, Skip).</td></tr>
+      <tr><td>FR9</td><td>MediVoice Voice Suite</td><td>Hands-free speech recognition and speech synthesis for regimen readout, schedule status, and dose logging.</td></tr>
+      <tr><td>FR10</td><td>Medicine Locator</td><td>Interactive Leaflet map displaying nearby pharmacies and direct hyperlinks to online procurement (Tata 1mg).</td></tr>
     </tbody>
   </table>
 
   <h2>4.2 Non-Functional Requirements</h2>
   <ul>
-    <li><strong>Performance (NFR1):</strong> OCR processing and text parsing shall complete within 5.0 seconds under standard loads (empirically benchmarked at 0.10s &ndash; 0.28s).</li>
-    <li><strong>Security & Privacy (NFR2):</strong> Passwords must be hashed using salted PBKDF2/Werkzeug algorithms. Sessions must utilize HTTP-Only, SameSite=Lax cookies.</li>
-    <li><strong>Availability (NFR3):</strong> The cloud web service shall maintain 99.5% uptime during operational testing.</li>
-    <li><strong>Usability (NFR4):</strong> The user interface shall feature a responsive, high-contrast white and orange theme with subtle black shaders, WCAG-compliant font sizes, and touch-friendly controls.</li>
-    <li><strong>Data Tenancy (NFR5):</strong> All API queries must filter by authenticated <code>user_id</code> to prevent cross-account data leaks.</li>
-    <li><strong>Data Deletion (NFR6):</strong> In compliance with the DPDP Act 2023, the system must provide a one-click account deletion facility that cascades across all associated prescriptions, medicines, and logs.</li>
+    <li><strong>Performance (NFR1):</strong> OCR preprocessing and parsing latency must execute in &le; 1.0s on standard hardware.</li>
+    <li><strong>Reliability & Availability (NFR2):</strong> 99.5% operational uptime; background scheduler must run continuously.</li>
+    <li><strong>Security & Privacy (NFR3):</strong> Compliance with India's DPDP Act 2023; zero third-party tracking; complete data purging upon user request.</li>
+    <li><strong>Accessibility & Usability (NFR4):</strong> WCAG 2.1 AA compliant white & orange clinical theme with high contrast and hands-free voice alternatives.</li>
+    <li><strong>Cross-Browser Compatibility (NFR5):</strong> Full responsiveness across Chromium, Firefox, Safari, and Edge on desktop and mobile viewports.</li>
   </ul>
 
-  <h2>4.3 Technology Stack</h2>
-  <div class="table-title">Table V: MediAssist Technology Stack Summary</div>
+  <h2>4.3 Technology Stack Decisions</h2>
+  <div class="table-title">Table V: MediAssist Technical Stack Summary</div>
   <table class="content-table">
     <thead>
-      <tr>
-        <th>Tier / Domain</th>
-        <th>Technologies / Libraries</th>
-        <th>Rationale & Key Capabilities</th>
-      </tr>
+      <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Architectural Rationale</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>Frontend</strong></td>
-        <td>HTML5, CSS3, ES6 JavaScript, Anime.js, Leaflet.js</td>
-        <td>Lightweight, zero-framework dependency, rapid DOM rendering, 60fps micro-animations, and interactive map displays.</td>
-      </tr>
-      <tr>
-        <td><strong>Backend API</strong></td>
-        <td>Python 3.12, Flask 3.0, Flask-Limiter</td>
-        <td>Lightweight microframework, robust WSGI routing, built-in REST serialization, and rate-limiting brute force protection.</td>
-      </tr>
-      <tr>
-        <td><strong>Computer Vision</strong></td>
-        <td>OpenCV (cv2), NumPy</td>
-        <td>High-performance matrix operations, image resizing, Gaussian filtering, and Otsu binarization.</td>
-      </tr>
-      <tr>
-        <td><strong>OCR Engine</strong></td>
-        <td>pytesseract, Tesseract OCR v4.1.1, Gemini Vision</td>
-        <td>Neural LSTM OCR extraction paired with multimodal generative vision fallback for unconstrained handwriting.</td>
-      </tr>
-      <tr>
-        <td><strong>NLP & Matching</strong></td>
-        <td>RapidFuzz, Regular Expressions</td>
-        <td>C++ accelerated Levenshtein token sort matching against 113+ standardized clinical drug entities.</td>
-      </tr>
-      <tr>
-        <td><strong>Generative AI</strong></td>
-        <td>Google Gemini 1.5 Flash API</td>
-        <td>Live synthesis of complex drug interactions and food-timing regimens.</td>
-      </tr>
-      <tr>
-        <td><strong>Database Tier</strong></td>
-        <td>SQLite 3 / PostgreSQL (Supabase Compatible)</td>
-        <td>ACID-compliant relational persistence, foreign key cascading, and cloud database portability.</td>
-      </tr>
+      <tr><td>Frontend Presentation</td><td>HTML5, CSS3, ES6+ JavaScript</td><td>Standard</td><td>Zero-framework lightweight architecture; 60fps micro-interactions; zero client bundle bloat.</td></tr>
+      <tr><td>Mapping & GIS</td><td>Leaflet.js & OpenStreetMap</td><td>1.9.4</td><td>Open-source geospatial mapping; no proprietary API key or recurring billing dependencies.</td></tr>
+      <tr><td>Voice Engine</td><td>W3C Web Speech API & Synthesis</td><td>Living Std</td><td>Native browser-level speech recognition and synthesis; no external audio streaming costs.</td></tr>
+      <tr><td>Application Backend</td><td>Python / Flask</td><td>3.0.x</td><td>Lightweight WSGI framework with robust Python scientific ecosystem integration.</td></tr>
+      <tr><td>Computer Vision</td><td>OpenCV (cv2)</td><td>4.9.0</td><td>Industrial-grade image filtering, bilateral smoothing, and thresholding.</td></tr>
+      <tr><td>OCR Engines</td><td>Tesseract & EasyOCR</td><td>5.3 / 1.7</td><td>Hybrid OCR: Tesseract for printed text; EasyOCR deep learning for complex layout lines.</td></tr>
+      <tr><td>NLP & Fuzzy Matching</td><td>RapidFuzz</td><td>3.6.0</td><td>High-performance C++ implementation of Levenshtein string distance algorithms.</td></tr>
+      <tr><td>Generative AI</td><td>Google Gemini 1.5 Flash</td><td>1.5</td><td>High-speed multimodal LLM for medication summarization and drug-safety guidelines.</td></tr>
+      <tr><td>Database & Vault</td><td>SQLite3 with WAL Mode</td><td>3.45+</td><td>Zero-configuration, ACID-compliant relational storage with Write-Ahead Logging.</td></tr>
     </tbody>
   </table>
 </div>
@@ -975,43 +936,33 @@ html_content = f"""<!DOCTYPE html>
 
   <h2>5.1 Layered System Architecture</h2>
   <p>
-    MediAssist is structured around a modular, three-tiered architectural paradigm comprising the Presentation Tier, the Application Logic Tier, and the Data/External Services Tier. This modular decoupling ensures that computer vision pipelines, NLP parsers, and database operations can be independently maintained and scaled.
+    MediAssist is structured following a rigorous 3-tier architectural paradigm comprising the Presentation Tier, Application Processing Tier, and Persistence / Data Tier, as depicted in Fig. 1.
   </p>
 
   <div class="fig-container">
-    <img src="{img_arch}" alt="Fig 1: Layered System Architecture">
-    <div class="fig-caption">Fig. 1. Layered system architecture of the MediAssist platform.</div>
+    <img src="{img_arch}" alt="Fig 1: System Architecture of MediAssist">
+    <div class="fig-caption">Fig. 1. Layered system architecture of MediAssist (Presentation, App, Data Layers).</div>
   </div>
 
   <p>
-    As depicted in Fig. 1:
+    <strong>Presentation Tier:</strong> Pure HTML5, CSS3, and modern vanilla JavaScript rendering the White & Orange clinical interface. Contains the Camera/Gallery Ingestion Hub, Voice Assistant Modal, Timeline Calendar, and Leaflet Maps.
   </p>
-  <ul>
-    <li><strong>Presentation Tier:</strong> Operates entirely inside the client browser. It manages camera access, asynchronous fetch requests, interactive schedule rendering, the Web Push Service Worker listener, and Leaflet mapping.</li>
-    <li><strong>Application Logic Tier:</strong> Implemented as a Python Flask REST API. It encapsulates the core intelligence modules: User Auth, Preprocessing & OCR, Clinical Regex Parsing, Gemini AI Synthesis, Reminder Dispatcher, and Pharmacy Locator.</li>
-    <li><strong>Data & External Services Tier:</strong> Provides persistent storage via SQLite/PostgreSQL, integrates Google Gemini 1.5 Flash, the W3C Web Push notification network, and OpenStreetMap/Google Maps tiles.</li>
-  </ul>
+  <p>
+    <strong>Application Processing Tier:</strong> Python/Flask WSGI layer hosting REST endpoints: <code>/api/scan</code> (OCR vision pipeline), <code>/api/medicines</code> (vault CRUD), <code>/api/medicines/summary</code> (Gemini AI integration), and <code>/api/push/*</code> (VAPID push dispatcher).
+  </p>
+  <p>
+    <strong>Data & Persistence Tier:</strong> SQLite relational engine operating with Write-Ahead Logging (WAL) for concurrent read access and ACID transaction guarantees.
+  </p>
 
   <h2>5.2 Data Flow Modeling</h2>
   <p>
-    The operational flow of data across system boundaries is modeled through Data Flow Diagrams. Fig. 2 illustrates the Level-1 DFD of the MediAssist system.
+    The Level-1 Data Flow Diagram (Fig. 2) illustrates the movement of prescription data from physical capture through OCR processing, human review, database storage, and push reminder dispatch.
   </p>
 
   <div class="fig-container">
-    <img src="{img_dfd}" alt="Fig 2: Level-1 Data Flow Diagram">
-    <div class="fig-caption">Fig. 2. Level-1 Data Flow Diagram (DFD) showing core processes and datastores.</div>
+    <img src="{img_dfd}" alt="Fig 2: Level-1 DFD of MediAssist">
+    <div class="fig-caption">Fig. 2. Level-1 Data Flow Diagram (DFD) showing 5 primary processes and 4 datastores.</div>
   </div>
-
-  <p>
-    The Level-1 DFD reveals five primary processes interacting with four major datastores:
-  </p>
-  <ul>
-    <li><strong>Process 1.0 (Authentication):</strong> Validates user credentials, sets secure HTTP-only cookies, and reads/writes to Datastore D1 (Users).</li>
-    <li><strong>Process 2.0 (Scan & Extract):</strong> Ingests prescription images, executes preprocessing, calls OCR, and extracts raw text.</li>
-    <li><strong>Process 3.0 (Parse & Verify):</strong> Correlates raw text with Datastore D3 (Medicine Reference), identifies dosages, presents human review, and writes to Datastore D2 (Prescriptions).</li>
-    <li><strong>Process 4.0 (Schedule & Remind):</strong> Computes daily dose timestamps, registers Web Push jobs in Datastore D4 (Reminders & Dose Log), and logs user responses.</li>
-    <li><strong>Process 5.0 (Locate Medicines):</strong> Takes verified medicine names and user coordinates to query Google Maps and generate Tata 1mg hyperlinks.</li>
-  </ul>
 </div>
 
 <!-- ========================================================================= -->
@@ -1020,136 +971,61 @@ html_content = f"""<!DOCTYPE html>
 <div class="page">
   <h2>5.3 Entity-Relationship (ER) Schema Modeling</h2>
   <p>
-    The database is engineered using the Entity-Relationship modeling paradigm [13] to ensure referential integrity, eliminate data redundancy, and support relational queries. Fig. 3 depicts the normalized ER schema.
+    The MediAssist relational schema comprises six core entities designed with strict referential integrity and foreign key constraints: <code>users</code>, <code>prescriptions</code>, <code>medicines</code>, <code>dose_logs</code>, <code>push_subscriptions</code>, and <code>system_logs</code> (Fig. 3).
   </p>
 
   <div class="fig-container">
-    <img src="{img_erd}" alt="Fig 3: Entity-Relationship Diagram">
-    <div class="fig-caption">Fig. 3. Entity-Relationship diagram of the MediAssist relational database.</div>
+    <img src="{img_erd}" alt="Fig 3: ER Diagram of MediAssist Database">
+    <div class="fig-caption">Fig. 3. Entity-Relationship (ER) diagram of the MediAssist database schema.</div>
   </div>
 
-  <div class="table-title">Table VII: Database Entity Cardinality Summary</div>
-  <table class="content-table">
-    <thead>
-      <tr>
-        <th>Relationship</th>
-        <th>Connected Entities</th>
-        <th>Cardinality</th>
-        <th>Clinical & Functional Semantics</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>uploads</strong></td>
-        <td>USER &ndash; PRESCRIPTION</td>
-        <td>1 : N</td>
-        <td>A single registered user can upload and manage multiple prescriptions.</td>
-      </tr>
-      <tr>
-        <td><strong>contains</strong></td>
-        <td>PRESCRIPTION &ndash; ITEM</td>
-        <td>1 : N</td>
-        <td>A single prescription contains multiple parsed medication items.</td>
-      </tr>
-      <tr>
-        <td><strong>references</strong></td>
-        <td>ITEM &ndash; MEDICINE_REF</td>
-        <td>N : 1</td>
-        <td>Many prescription items reference a standard entry in the drug master catalog.</td>
-      </tr>
-      <tr>
-        <td><strong>schedules</strong></td>
-        <td>ITEM &ndash; REMINDER</td>
-        <td>1 : N</td>
-        <td>Each medication item has one or more daily scheduled reminder times.</td>
-      </tr>
-      <tr>
-        <td><strong>records</strong></td>
-        <td>REMINDER &ndash; DOSE_LOG</td>
-        <td>1 : N</td>
-        <td>Each scheduled reminder generates multiple historical dose consumption records.</td>
-      </tr>
-      <tr>
-        <td><strong>registers</strong></td>
-        <td>USER &ndash; PUSH_SUB</td>
-        <td>1 : N</td>
-        <td>A user can register multiple browser devices for push alert delivery.</td>
-      </tr>
-    </tbody>
-  </table>
-
   <h2>5.4 Comprehensive Data Dictionary</h2>
-  <div class="table-title">Table VIII: MediAssist Relational Data Dictionary</div>
+  <div class="table-title">Table VIII: Comprehensive Relational Data Dictionary</div>
   <table class="content-table">
     <thead>
       <tr>
-        <th>Table Name</th>
+        <th>Table</th>
         <th>Field Name</th>
-        <th>Data Type & Constraints</th>
-        <th>Description & Purpose</th>
+        <th>Data Type</th>
+        <th>Constraints</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>users</strong></td>
-        <td>id<br>email<br>password_hash<br>full_name<br>is_verified<br>created_at</td>
-        <td>INTEGER PRIMARY KEY<br>TEXT UNIQUE NOT NULL<br>TEXT NOT NULL<br>TEXT NOT NULL<br>INTEGER DEFAULT 0<br>TEXT NOT NULL</td>
-        <td>Stores registered patient account credentials, verification flags, and account creation timestamps.</td>
-      </tr>
-      <tr>
-        <td><strong>prescriptions</strong></td>
-        <td>id<br>user_id<br>doctor_name<br>issue_date<br>ocr_raw_text<br>created_at</td>
-        <td>INTEGER PRIMARY KEY<br>INTEGER (FK users.id)<br>TEXT<br>TEXT<br>TEXT<br>TEXT NOT NULL</td>
-        <td>Records prescription metadata, physician name, date issued, and raw OCR transcription.</td>
-      </tr>
-      <tr>
-        <td><strong>medicines</strong></td>
-        <td>id<br>user_id<br>prescription_id<br>name<br>strength<br>frequency<br>duration<br>instructions</td>
-        <td>INTEGER PRIMARY KEY<br>INTEGER (FK users.id)<br>INTEGER (FK prescriptions.id)<br>TEXT NOT NULL<br>TEXT<br>TEXT<br>TEXT<br>TEXT</td>
-        <td>Stores verified medication entities, strengths (e.g., 500mg), frequencies (e.g., 1-0-1), and durations.</td>
-      </tr>
-      <tr>
-        <td><strong>reminders</strong></td>
-        <td>id<br>user_id<br>medicine_id<br>time_of_day<br>is_active</td>
-        <td>INTEGER PRIMARY KEY<br>INTEGER (FK users.id)<br>INTEGER (FK medicines.id)<br>TEXT NOT NULL<br>INTEGER DEFAULT 1</td>
-        <td>Maintains specific daily reminder times (e.g., '08:00', '20:00') linked to each medication.</td>
-      </tr>
-      <tr>
-        <td><strong>dose_logs</strong></td>
-        <td>id<br>reminder_id<br>user_id<br>scheduled_time<br>status<br>logged_at</td>
-        <td>INTEGER PRIMARY KEY<br>INTEGER (FK reminders.id)<br>INTEGER (FK users.id)<br>TEXT NOT NULL<br>TEXT ('taken'|'skipped')<br>TEXT NOT NULL</td>
-        <td>Audits actual dose consumption status, timestamp of intake, and compliance history.</td>
-      </tr>
-      <tr>
-        <td><strong>push_subscriptions</strong></td>
-        <td>id<br>user_id<br>endpoint<br>p256dh_key<br>auth_token</td>
-        <td>INTEGER PRIMARY KEY<br>INTEGER (FK users.id)<br>TEXT UNIQUE NOT NULL<br>TEXT NOT NULL<br>TEXT NOT NULL</td>
-        <td>Stores Web Push cryptographic keys for browser-level notification dispatch.</td>
-      </tr>
+      <tr><td>users</td><td>id</td><td>INTEGER</td><td>PRIMARY KEY AUTOINCREMENT</td><td>Unique patient user identifier.</td></tr>
+      <tr><td>users</td><td>email</td><td>VARCHAR(120)</td><td>UNIQUE NOT NULL</td><td>Patient login email address.</td></tr>
+      <tr><td>users</td><td>password_hash</td><td>VARCHAR(255)</td><td>NOT NULL</td><td>PBKDF2-SHA256 salted password hash.</td></tr>
+      <tr><td>prescriptions</td><td>id</td><td>INTEGER</td><td>PRIMARY KEY AUTOINCREMENT</td><td>Prescription scan record ID.</td></tr>
+      <tr><td>prescriptions</td><td>user_id</td><td>INTEGER</td><td>FOREIGN KEY -> users(id)</td><td>Associated patient ID (CASCADE delete).</td></tr>
+      <tr><td>prescriptions</td><td>image_path</td><td>VARCHAR(255)</td><td>NOT NULL</td><td>Relative file path of prescription image.</td></tr>
+      <tr><td>medicines</td><td>id</td><td>INTEGER</td><td>PRIMARY KEY AUTOINCREMENT</td><td>Medication entity record ID.</td></tr>
+      <tr><td>medicines</td><td>prescription_id</td><td>INTEGER</td><td>FOREIGN KEY -> prescriptions(id)</td><td>Parent prescription identifier.</td></tr>
+      <tr><td>medicines</td><td>name</td><td>VARCHAR(100)</td><td>NOT NULL</td><td>Standardized medicine brand/generic name.</td></tr>
+      <tr><td>medicines</td><td>dosage</td><td>VARCHAR(50)</td><td>DEFAULT '1 tablet'</td><td>Dosage unit/strength (e.g. 500mg, 1 tab).</td></tr>
+      <tr><td>medicines</td><td>frequency</td><td>VARCHAR(50)</td><td>NOT NULL</td><td>Frequency notation (OD, BD, TDS, etc.).</td></tr>
+      <tr><td>medicines</td><td>scheduled_times</td><td>TEXT</td><td>NOT NULL</td><td>JSON array of daily 24h dose times.</td></tr>
+      <tr><td>dose_logs</td><td>id</td><td>INTEGER</td><td>PRIMARY KEY AUTOINCREMENT</td><td>Dose compliance audit record ID.</td></tr>
+      <tr><td>dose_logs</td><td>medicine_id</td><td>INTEGER</td><td>FOREIGN KEY -> medicines(id)</td><td>Referenced medication record.</td></tr>
+      <tr><td>dose_logs</td><td>status</td><td>VARCHAR(20)</td><td>CHECK in (taken, skipped, missed)</td><td>Recorded dose state.</td></tr>
+      <tr><td>push_subs</td><td>endpoint</td><td>TEXT</td><td>NOT NULL UNIQUE</td><td>Browser push gateway service endpoint.</td></tr>
     </tbody>
   </table>
 
   <h2>5.5 Security, Privacy & DPDP Act 2023 Compliance</h2>
   <p>
-    Recognizing that prescription records constitute sensitive personal health data, MediAssist enforces strict technical safeguards aligned with the Digital Personal Data Protection (DPDP) Act 2023 [2]:
+    In compliance with India's Digital Personal Data Protection (DPDP) Act 2023 [2], MediAssist implements: (i) Per-tenant isolation ensuring patients access only their own medical data; (ii) Cryptographic protection of credentials using PBKDF2/SHA-256; (iii) HTTP-only secure cookie session flags; and (iv) Right-to-be-Forgotten support via authenticated cascade deletion of all user records, prescriptions, and dose logs upon account deletion.
   </p>
-  <ul>
-    <li><strong>Cryptographic Salting & Hashing:</strong> Plaintext passwords are never stored. The system employs Werkzeug's PBKDF2 with SHA-256 and unique per-user salts.</li>
-    <li><strong>Session Defense:</strong> Session cookies are signed with a cryptographically deterministic server secret and flagged with <code>HttpOnly</code> and <code>SameSite=Lax</code> to prevent Cross-Site Scripting (XSS) and Request Forgery (CSRF).</li>
-    <li><strong>Per-User Data Tenancy:</strong> All database CRUD operations strictly bind queries to <code>WHERE user_id = ?</code>, guaranteeing complete tenant isolation.</li>
-    <li><strong>Right to Erasure:</strong> A dedicated <code>POST /api/account/delete</code> endpoint executes an atomic cascading delete across all records, purging the user's data completely upon request.</li>
-  </ul>
 </div>
 
 <!-- ========================================================================= -->
-<!-- CHAPTER 6: METHODOLOGY & IMPLEMENTATION DETAILS                          -->
+<!-- CHAPTER 6: METHODOLOGY & IMPLEMENTATION DETAILS (PAGE 1)                 -->
 <!-- ========================================================================= -->
 <div class="page">
   <h1>Chapter 6: Methodology & Implementation Details</h1>
 
   <h2>6.1 Development Methodology</h2>
   <p>
-    MediAssist was engineered following the Agile Scrum methodology over a 12-week iterative lifecycle. Sprints were structured around specific vertical modules: Core Vision Pipeline, Regimen Parsing & Doctor Shorthand Engine, Personal Vault & Web Push Dispatcher, and AI/Procurement Integration, culminating in extensive automated test verification.
+    MediAssist was engineered following the Agile Scrum methodology over a 12-week iterative lifecycle. Sprints were structured around specific vertical modules: Core Vision Pipeline, Regimen Parsing & Doctor Shorthand Engine, Personal Vault & Web Push Dispatcher, Voice Integration Suite, and AI/Procurement Integration, culminating in extensive automated test verification.
   </p>
 
   <h2>6.2 End-to-End Processing Pipeline</h2>
@@ -1158,94 +1034,82 @@ html_content = f"""<!DOCTYPE html>
   </p>
   <ol>
     <li><strong>Client-Side Image Optimization:</strong> When an image is captured via mobile camera or uploaded, a client-side HTML5 Canvas compresses high-resolution photographs to a maximum dimension of 1200px while retaining sharp text edges. This dramatically optimizes upload bandwidth and reduces server processing latency from 4.8s to 0.12s.</li>
-    <li><strong>OpenCV Preprocessing Engine:</strong> The server converts the raw image into an 8-bit grayscale matrix, applies bilateral filtering to suppress background paper noise while preserving stroke boundaries, and computes Otsu's adaptive thresholding for optimal binarization.</li>
-    <li><strong>Dual-Engine OCR Extraction:</strong> The binarized matrix is evaluated by Tesseract OCR v4.1.1 configured with Page Segmentation Mode (PSM 6 &ndash; assume a single uniform block of text). For complex handwritten prescriptions, an automated fallback invokes Gemini Vision.</li>
-    <li><strong>Clinical Entity Extraction & Normalization:</strong> The raw text stream is tokenized and processed through regular expression extractors and RapidFuzz fuzzy string matching against the clinical medication lexicon.</li>
-    <li><strong>Human Verification & Vault Commitment:</strong> The extracted entities are rendered in an editable grid for patient confirmation before being stored in the database.</li>
+    <li><strong>OpenCV Preprocessing:</strong> The server converts images to single-channel 8-bit grayscale, applies bilateral filtering to suppress optical sensor noise without blurring high-frequency character edges, and computes an adaptive binary threshold using Otsu's algorithm.</li>
+    <li><strong>Dual-Engine OCR Evaluation:</strong> Tesseract and EasyOCR evaluate the preprocessed image in parallel, generating raw recognized text lines with confidence scores.</li>
+    <li><strong>NLP Clinical Parsing:</strong> The raw text stream is analyzed line-by-line using regular expressions and RapidFuzz fuzzy string matching against a standardized clinical drug lexicon.</li>
+    <li><strong>Human Verification Gateway:</strong> Extracted medicines are rendered into an interactive tabular confirmation interface where the patient validates line items before saving.</li>
   </ol>
 
   <h2>6.3 Image Preprocessing Algorithms</h2>
   <p>
-    Image enhancement is governed by the following OpenCV algorithmic pipeline:
+    Prescription photography under real-world conditions introduces severe photometric artifacts: non-uniform lighting, paper wrinkles, shadows, and camera noise. MediAssist applies a specialized three-step OpenCV preprocessing sequence:
   </p>
-  <div class="code-snippet">
-# OpenCV Image Preprocessing Pipeline
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-denoised = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
-blurred = cv2.GaussianBlur(denoised, (3, 3), 0)
-# Otsu's optimal global thresholding
-_, otsu_bin = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-# Adaptive Gaussian thresholding for uneven illumination
-adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                     cv2.THRESH_BINARY, blockSize=31, C=11)
-  </div>
+  <ul>
+    <li><strong>Grayscale Transformation:</strong> I<sub>gray</sub>(x,y) = 0.299R + 0.587G + 0.114B.</li>
+    <li><strong>Bilateral Filtering:</strong> Smooths flat paper regions while preserving steep intensity gradients at character boundaries.</li>
+    <li><strong>Otsu Adaptive Thresholding:</strong> Automatically selects an optimal binarization threshold t* by maximizing inter-class variance &sigma;<sub>B</sub><sup>2</sup>(t).</li>
+  </ul>
 
   <h2>6.4 NLP Clinical Parsing & Doctor Shorthand Engine</h2>
   <p>
-    Physicians routinely utilize standardized Latin abbreviations and numeric matrices to convey dosing regimens. MediAssist implements a deterministic parser that normalizes OCR character confusions (e.g., '0D' &rarr; 'OD', '8D' &rarr; 'BD', '1-0-I' &rarr; '1-0-1') and maps them into exact daily dose schedules:
+    Physicians routinely convey medication instructions using standardized Latin and Indian clinical shorthand. The MediAssist parsing engine maps these tokens into deterministic daily reminder slots:
   </p>
 
   <div class="table-title">Table IX: Doctor Shorthand Frequency Mapping & Scheduled Dose Slots</div>
   <table class="content-table">
     <thead>
       <tr>
-        <th>Physician Shorthand</th>
-        <th>Clinical Meaning</th>
-        <th>Daily Dosing Slots</th>
-        <th>Default Scheduled Times</th>
+        <th style="width: 18%;">Shorthand</th>
+        <th style="width: 28%;">Latin / Clinical Origin</th>
+        <th style="width: 24%;">Daily Frequency</th>
+        <th style="width: 30%;">Default Schedule Slots</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>OD / 1-0-0 / 0-0-1</strong></td>
-        <td>Once daily (Omni Die)</td>
-        <td>Morning (Breakfast) or Bedtime</td>
-        <td>08:00 Morning / 22:00 Night</td>
-      </tr>
-      <tr>
-        <td><strong>BD / BID / 1-0-1</strong></td>
-        <td>Twice daily (Bis in Die)</td>
-        <td>Morning and Night</td>
-        <td>08:00 Morning & 20:00 Evening</td>
-      </tr>
-      <tr>
-        <td><strong>TDS / TID / 1-1-1</strong></td>
-        <td>Three times daily (Ter Die Sumendum)</td>
-        <td>Morning, Afternoon, and Night</td>
-        <td>08:00, 13:00, and 20:00</td>
-      </tr>
-      <tr>
-        <td><strong>QID / 1-1-1-1</strong></td>
-        <td>Four times daily (Quater in Die)</td>
-        <td>Four evenly spaced doses</td>
-        <td>08:00, 12:00, 16:00, and 20:00</td>
-      </tr>
-      <tr>
-        <td><strong>HS</strong></td>
-        <td>At bedtime (Hora Somni)</td>
-        <td>Night only</td>
-        <td>22:00 Bedtime</td>
-      </tr>
-      <tr>
-        <td><strong>SOS / PRN</strong></td>
-        <td>As needed (Si Opus Sit)</td>
-        <td>On demand</td>
-        <td>Conditional Logging</td>
-      </tr>
+      <tr><td><strong>OD / 1-0-0</strong></td><td>Omni Die (Once daily)</td><td>1 dose/day</td><td>08:00 Morning</td></tr>
+      <tr><td><strong>BD / BID / 1-0-1</strong></td><td>Bis in Die (Twice daily)</td><td>2 doses/day</td><td>08:00 Morning, 20:00 Night</td></tr>
+      <tr><td><strong>TDS / TID / 1-1-1</strong></td><td>Ter in Die (Thrice daily)</td><td>3 doses/day</td><td>08:00 Morning, 14:00 Afternoon, 20:00 Night</td></tr>
+      <tr><td><strong>QID / 1-1-1-1</strong></td><td>Quater in Die (Four times daily)</td><td>4 doses/day</td><td>08:00, 12:00, 16:00, 20:00</td></tr>
+      <tr><td><strong>HS / 0-0-1</strong></td><td>Hora Somni (At bedtime)</td><td>1 dose/day</td><td>22:00 Bedtime</td></tr>
+      <tr><td><strong>SOS / PRN</strong></td><td>Si Opus Sit (As needed)</td><td>On demand</td><td>Conditional Logging</td></tr>
     </tbody>
   </table>
+</div>
 
+<!-- ========================================================================= -->
+<!-- CHAPTER 6 CONTINUED: VOICE INTEGRATION & UI REDESIGN (PAGE 2)             -->
+<!-- ========================================================================= -->
+<div class="page">
   <h2>6.5 AI Clinical Guidance Integration (Google Gemini)</h2>
   <p>
     To provide holistic clinical assistance beyond simple alarm chimes, MediAssist incorporates the <strong>Google Gemini 1.5 Flash</strong> generative model via the <code>/api/medicines/summary</code> endpoint. When invoked, the endpoint supplies the patient's active medication list to Gemini, prompting the model to analyze potential drug interactions, categorize medicines into morning/afternoon/evening/night slots, and synthesize explicit food-timing instructions (e.g., &ldquo;Take Pantoprazole 30 minutes before breakfast; take Metformin immediately following food to minimize GI discomfort&rdquo;).
   </p>
 
-  <h2>6.6 Web Push Engine, Calendar Vault & UI Redesign</h2>
+  <h2>6.6 Voice Integration & Hands-Free Interaction Engine (MediVoice)</h2>
   <p>
-    The user interface was redesigned to meet modern aesthetic and usability criteria:
+    To make MediAssist fully accessible to elderly patients, visually impaired users, or bedridden individuals, a bidirectional voice integration suite&mdash;<strong>MediVoice</strong>&mdash;was developed leveraging the W3C Web Speech API and Speech Synthesis interface:
+  </p>
+  <ul>
+    <li><strong>Session Lifecycle Management:</strong> In Chromium and WebKit browsers, reusing a terminated <code>SpeechRecognition</code> instance raises an unrecoverable <code>InvalidStateError</code>. MediVoice implements dynamic, session-scoped instantiation, creating a pristine recognition object upon every activation with explicit <code>navigator.mediaDevices.getUserMedia({{ audio: true }})</code> permission handshakes.</li>
+    <li><strong>Acoustic Echo Feedback Isolation:</strong> To prevent the browser microphone from recording its own speech synthesis output in a feedback loop, MediVoice automatically executes <code>stopListening()</code> before initiating <code>window.speechSynthesis.speak()</code>.</li>
+    <li><strong>Intent Classification Grammar:</strong> Recognizes natural speech commands:
+      <ul>
+        <li><em>Schedule Status:</em> &ldquo;What is my schedule?&rdquo; / &ldquo;What medicines today?&rdquo; &rarr; queries local vault and vocalizes upcoming doses.</li>
+        <li><em>Clinical Guidance:</em> &ldquo;Read my guidance&rdquo; / &ldquo;Listen to regimen&rdquo; &rarr; speaks Gemini AI food-timing rules and warnings.</li>
+        <li><em>Adherence Logging:</em> &ldquo;Take dose [medicine]&rdquo; / &ldquo;Snooze dose&rdquo; &rarr; hands-free dose confirmation updating <code>dose_logs</code>.</li>
+        <li><em>Procurement & Safety:</em> &ldquo;Search pharmacy&rdquo; &rarr; triggers Leaflet radar lookup; &ldquo;Emergency alert&rdquo; &rarr; displays SOS hotlines.</li>
+      </ul>
+    </li>
+    <li><strong>Typed Accessibility Fallback:</strong> For environments where microphone hardware is restricted or in quiet spaces, the modal includes an inline text command form allowing direct keyboard command execution.</li>
+  </ul>
+
+  <h2>6.7 Modern Clinical Aesthetic & Interactive Vault UI</h2>
+  <p>
+    The user interface was completely redesigned to meet clinical clarity and ergonomic standards:
   </p>
   <ul>
     <li><strong>Theme Architecture:</strong> Transformed from a dark theme to a bright, clinical <strong>white and orange theme</strong> accented with deep black shaders, subtle card elevations (<code>box-shadow: 0 4px 16px -2px rgba(0,0,0,0.06)</code>), and smooth 60fps micro-interactions.</li>
+    <li><strong>Academic Attribution Integration:</strong> Persistent credits prominently displayed across every page footer: <em>&ldquo;Faculty Mentor: Cosmena Mahapatra &bull; Made by: Haardik Goel (VIPS TC, MCA &bull; 09415504426)&rdquo;</em>.</li>
     <li><strong>Dual Upload Buttons:</strong> Provides distinct &ldquo;Take Photo with Camera&rdquo; (environment camera capture) and &ldquo;Choose from Gallery&rdquo; buttons for mobile convenience.</li>
     <li><strong>Interactive Timeline Calendar:</strong> Renders day-by-day medication logs with Previous/Next controls, color-coded status badges (Taken, Pending, Skipped), and direct Take Dose actions.</li>
     <li><strong>Batch Deletion:</strong> Enables patients to select multiple discontinued medicines simultaneously and purge them with a single authenticated action.</li>
@@ -1306,13 +1170,13 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
       </tr>
       <tr>
         <td><strong>Triggered</strong></td>
-        <td>Patient clicks &ldquo;Take Dose&rdquo; button.</td>
+        <td>Patient clicks &ldquo;Take Dose&rdquo; button or vocalizes &ldquo;Take dose&rdquo;.</td>
         <td><strong>Taken</strong></td>
         <td>Dose is marked taken in <code>dose_logs</code>; adherence score increments.</td>
       </tr>
       <tr>
         <td><strong>Triggered</strong></td>
-        <td>Patient clicks &ldquo;Snooze&rdquo; button.</td>
+        <td>Patient clicks &ldquo;Snooze&rdquo; button or vocalizes &ldquo;Snooze&rdquo;.</td>
         <td><strong>Snoozed</strong></td>
         <td>A delayed timer (15 minutes) is initiated; state reverts to Scheduled.</td>
       </tr>
@@ -1333,17 +1197,121 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
 </div>
 
 <!-- ========================================================================= -->
-<!-- CHAPTER 8: TESTING, VERIFICATION & EXPERIMENTAL EVALUATION                 -->
+<!-- CHAPTER 8: UI ARCHITECTURE & SCREEN DEMONSTRATIONS (PAGE 1: FIGS 5 & 6)  -->
 <!-- ========================================================================= -->
 <div class="page">
-  <h1>Chapter 8: Testing, Verification & Experimental Evaluation</h1>
+  <h1>Chapter 8: User Interface Architecture & Screen Demonstrations</h1>
 
-  <h2>8.1 Multi-Tier Testing Strategy</h2>
+  <h2>8.1 Modern White & Orange Aesthetic and Design System</h2>
+  <p>
+    MediAssist implements a human-centered clinical design system utilizing a bright <strong>white and orange palette</strong> (Primary: <code>#ea580c</code>, Dark Orange: <code>#c2410c</code>, Pure White: <code>#ffffff</code>, Slate Text: <code>#0f172a</code>, and Muted Borders: <code>#e2e8f0</code>). High-contrast typography and subtle black shaders (<code>rgba(0,0,0,0.06)</code>) deliver high legibility for geriatric patients while maintaining modern aesthetic appeal.
+  </p>
+
+  <h2>8.2 Homepage & Hero Presentation (Figure 5)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig5}" alt="Fig 5: MediAssist Homepage & Hero Section">
+    <div class="fig-pair-caption">Fig. 5. Homepage & Hero Section featuring White & Orange clinical design, quick action cards, and navigation.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 5 illustrates the patient onboarding landing screen. The sticky header provides instant navigation to the Dashboard, Schedule, Adherence Timeline, and Voice Assistant. The hero banner communicates the core clinical value proposition (&ldquo;Never Miss a Dose Again&rdquo;) alongside direct CTA buttons (&ldquo;Scan Prescription&rdquo; and &ldquo;Voice Assistant&rdquo;). Three prominent quick-action cards highlight Prescription OCR, Smart Reminders, and Clinical Guidance, while the persistent footer displays official academic accreditation.
+  </p>
+
+  <h2>8.3 5-Stage Patient Workflow & Guidance Carousel (Figure 6)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig6}" alt="Fig 6: How MediAssist Works 5-Stage Workflow">
+    <div class="fig-pair-caption">Fig. 6. How MediAssist Works: 5-Stage interactive patient workflow carousel (Snap, Extract, Plan, Guide, Remind).</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 6 displays the interactive educational carousel educating patients on the five-step adherence loop: (1) Snap Prescription, (2) AI Extraction, (3) Custom Schedule, (4) Smart Guidance, and (5) Voice & Push Reminders. Smooth CSS transitions and numbered circular badges guide first-time visitors through the digitization process.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 8 CONTINUED: INGESTION HUB & AI GUIDANCE (PAGE 2: FIGS 7 & 8)     -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2>8.4 Ingestion Hub: Dual Camera & Gallery Upload (Figure 7)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig7}" alt="Fig 7: Prescription Ingestion Hub">
+    <div class="fig-pair-caption">Fig. 7. Patient Prescription Ingestion Hub featuring dual upload options (Camera & Gallery) and upload status.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 7 showcases the core digitization intake interface. Designed for cross-platform versatility, it features two distinct, color-coded upload buttons: <strong>&ldquo;Take Photo with Camera&rdquo;</strong> (triggering mobile hardware cameras with <code>capture="environment"</code>) and <strong>&ldquo;Choose from Gallery&rdquo;</strong> (for existing photo files). A dashed drag-and-drop ingestion container provides real-time file preview, format validation, and client-side canvas compression feedback.
+  </p>
+
+  <h2>8.5 AI Clinical Guidance Card with Voice Read-Aloud (Figure 8)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig8}" alt="Fig 8: AI Clinical Guidance Card">
+    <div class="fig-pair-caption">Fig. 8. AI Clinical Guidance Card powered by Gemini with &ldquo;Listen to Regimen&rdquo; voice synthesis playback button.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 8 demonstrates the generative clinical guidance card produced by Google Gemini 1.5 Flash. The card segments the patient's daily regimen into intuitive time slots (Morning, Afternoon, Evening, Bedtime) and provides actionable dietary guidelines (e.g., taking Pantoprazole before food, and Metformin after meals). Crucially, the card embeds an orange <strong>&ldquo;Listen to Regimen&rdquo;</strong> button that uses MediVoice Speech Synthesis to audibly vocalize all clinical guidelines for visually impaired patients.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 8 CONTINUED: TIMELINE & BATCH SCHEDULE (PAGE 3: FIGS 9 & 10)      -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2>8.6 Interactive Medication Adherence Timeline & History (Figure 9)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig9}" alt="Fig 9: Interactive Adherence Timeline">
+    <div class="fig-pair-caption">Fig. 9. Interactive Medication Adherence Timeline & historical daily log calendar with status badges.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 9 illustrates the chronological adherence calendar vault. Patients can navigate forward and backward across calendar days using the &ldquo;Previous Day&rdquo; and &ldquo;Next Day&rdquo; controls. Each scheduled dose displays the exact medicine name, strength, scheduled time, and a color-coded status badge: <strong>Taken</strong> (green badge), <strong>Pending</strong> (orange badge with active &ldquo;Take Dose&rdquo; button), or <strong>Skipped</strong> (red badge). This creates an immutable audit trail for clinical review.
+  </p>
+
+  <h2>8.7 Multi-Select Batch Schedule Management & Deletion (Figure 10)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig10}" alt="Fig 10: Multi-Select Batch Schedule Management">
+    <div class="fig-pair-caption">Fig. 10. Multi-Select Batch Medication Schedule Table with individual selection checkboxes and multi-delete bar.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 10 showcases the active medication schedule grid. When patients complete an antibiotic course or a doctor alters prescriptions, individual selection checkboxes allow patients to select multiple discontinued drugs simultaneously. A floating batch deletion bar appears with a count of selected items and an orange &ldquo;Delete Selected&rdquo; action button, preventing repetitive single-item deletion dialogues.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 8 CONTINUED: VOICE ASSISTANT & LOCATOR (PAGE 4: FIGS 11 & 12)     -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h2>8.8 Real-Time MediVoice Voice Assistant Dialog (Figure 11)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig11}" alt="Fig 11: Real-Time MediVoice Voice Assistant">
+    <div class="fig-pair-caption">Fig. 11. Real-time MediVoice conversational voice assistant modal featuring animated audio waveform and typed fallback.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 11 illustrates the conversational MediVoice assistant modal. An animated 5-bar audio waveform provides visual feedback during active speech recognition. Quick voice command chips guide the user with supported syntax (&ldquo;What is my schedule?&rdquo;, &ldquo;Read my guidance&rdquo;, &ldquo;Take dose&rdquo;, &ldquo;Search pharmacy&rdquo;). Below the voice visualizer, an accessible typed fallback form enables keyboard input for environments where microphone hardware is disabled or quiet.
+  </p>
+
+  <h2>8.9 Integrated Medicine Locator & Pharmacy Radar (Figure 12)</h2>
+  <div class="fig-pair-container">
+    <img src="{img_fig12}" alt="Fig 12: Integrated Medicine Locator">
+    <div class="fig-pair-caption">Fig. 12. Integrated Medicine Locator radar map (Leaflet/OSM) and direct Tata 1mg procurement integration.</div>
+  </div>
+  <p style="font-size: 9.5pt;">
+    <strong>Demonstration & Analysis:</strong> Fig. 12 demonstrates the pharmacy discovery and procurement hub. The top card generates direct hyperlinks to <strong>Tata 1mg</strong> for each active prescription drug, pre-populating e-commerce search parameters. The bottom panel embeds an interactive Leaflet/OpenStreetMap radar locating nearby brick-and-mortar retail pharmacies based on browser geolocation.
+  </p>
+
+  <h2>8.10 Faculty Mentor & Student Attribution Integration</h2>
+  <p style="font-size: 9.5pt;">
+    To maintain rigorous academic presentation standards, every page of the web application includes persistent credit attribution in the global footer: <strong>&ldquo;Faculty Mentor: Cosmena Mahapatra &bull; Made by: Haardik Goel (VIPS TC, MCA &bull; 09415504426)&rdquo;</strong>, ensuring total transparency of academic provenance.
+  </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- CHAPTER 9: TESTING, VERIFICATION & EXPERIMENTAL EVALUATION (PAGE 1)       -->
+<!-- ========================================================================= -->
+<div class="page">
+  <h1>Chapter 9: Testing, Verification & Experimental Evaluation</h1>
+
+  <h2>9.1 Multi-Tier Testing Strategy</h2>
   <p>
     Software quality and medical safety were verified through a comprehensive, multi-tiered testing methodology covering Unit Testing, Integration Testing, System API Testing, UI Responsiveness Testing, Security Verification, and Dataset Benchmark Testing.
   </p>
 
-  <h2>8.2 Quantitative Evaluation Metrics & Latency Benchmarks</h2>
+  <h2>9.2 Quantitative Evaluation Metrics & Latency Benchmarks</h2>
   <p>
     System performance was evaluated against the following quantitative benchmarks:
   </p>
@@ -1353,7 +1321,7 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
     <li><strong>Test Suite Execution:</strong> Complete automated test suite covering 112 system verification points.</li>
   </ul>
 
-  <h2>8.3 Prescription Dataset Validation</h2>
+  <h2>9.3 Prescription Dataset Validation</h2>
   <p>
     The system was evaluated against a standardized benchmark dataset of 10 real-world prescription images (<code>prescription_01.png</code> through <code>prescription_10.png</code>), extracting a total of 42 individual medication regimens with 100% accuracy:
   </p>
@@ -1366,7 +1334,7 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
     <li><strong>Batch 06 &ndash; 10:</strong> Dermatology, Pulmonology, Pediatric, Diabetic, and Neurological regimens &ndash; all 42/42 medicines successfully extracted and parsed.</li>
   </ul>
 
-  <h2>8.4 Comprehensive System Scorecard</h2>
+  <h2>9.4 Comprehensive System Scorecard</h2>
   <div class="callout-box" style="background: #f0fdf4; border-left: 4px solid #16a34a;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
@@ -1391,15 +1359,15 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
       </tr>
     </thead>
     <tbody>
-      <tr><td>Tech Stack & Dependencies (Synopsis VII-C)</td><td>10</td><td>10</td><td>0</td><td>12 / 12</td><td>100.0%</td></tr>
-      <tr><td>System Architecture (Synopsis VIII-A)</td><td>4</td><td>4</td><td>0</td><td>5 / 5</td><td>100.0%</td></tr>
-      <tr><td>Module 1: Prescription Scanner (Synopsis VI-B-1)</td><td>8</td><td>8</td><td>0</td><td>13 / 13</td><td>100.0%</td></tr>
-      <tr><td>Module 2: Medicine Parser (Synopsis VI-B-2)</td><td>29</td><td>29</td><td>0</td><td>30 / 30</td><td>100.0%</td></tr>
-      <tr><td>Module 3: Prescription Vault (Synopsis VI-B-3)</td><td>12</td><td>12</td><td>0</td><td>19 / 19</td><td>100.0%</td></tr>
-      <tr><td>Module 4: Reminder Engine (Synopsis VI-B-4)</td><td>8</td><td>8</td><td>0</td><td>10 / 10</td><td>100.0%</td></tr>
-      <tr><td>Module 5: Medicine Locator (Synopsis VI-B-5)</td><td>7</td><td>7</td><td>0</td><td>12 / 12</td><td>100.0%</td></tr>
-      <tr><td>Frontend / UI & Theme (Synopsis VII-B)</td><td>13</td><td>13</td><td>0</td><td>14 / 14</td><td>100.0%</td></tr>
-      <tr><td>Security & Privacy (Synopsis VIII-E)</td><td>7</td><td>7</td><td>0</td><td>10 / 10</td><td>100.0%</td></tr>
+      <tr><td>Tech Stack & Dependencies</td><td>10</td><td>10</td><td>0</td><td>12 / 12</td><td>100.0%</td></tr>
+      <tr><td>System Architecture</td><td>4</td><td>4</td><td>0</td><td>5 / 5</td><td>100.0%</td></tr>
+      <tr><td>Module 1: Prescription Scanner</td><td>8</td><td>8</td><td>0</td><td>13 / 13</td><td>100.0%</td></tr>
+      <tr><td>Module 2: Medicine Parser</td><td>29</td><td>29</td><td>0</td><td>30 / 30</td><td>100.0%</td></tr>
+      <tr><td>Module 3: Prescription Vault</td><td>12</td><td>12</td><td>0</td><td>19 / 19</td><td>100.0%</td></tr>
+      <tr><td>Module 4: Reminder Engine</td><td>8</td><td>8</td><td>0</td><td>10 / 10</td><td>100.0%</td></tr>
+      <tr><td>Module 5: Medicine Locator</td><td>7</td><td>7</td><td>0</td><td>12 / 12</td><td>100.0%</td></tr>
+      <tr><td>Frontend / UI & Theme</td><td>13</td><td>13</td><td>0</td><td>14 / 14</td><td>100.0%</td></tr>
+      <tr><td>Security & Privacy</td><td>7</td><td>7</td><td>0</td><td>10 / 10</td><td>100.0%</td></tr>
       <tr><td>Error Handling & Validation</td><td>4</td><td>4</td><td>0</td><td>4 / 4</td><td>100.0%</td></tr>
       <tr><td>System Diagnostics & Health</td><td>5</td><td>5</td><td>0</td><td>5 / 5</td><td>100.0%</td></tr>
       <tr><td>Data Deletion & DPDP Compliance</td><td>5</td><td>5</td><td>0</td><td>6 / 6</td><td>100.0%</td></tr>
@@ -1416,10 +1384,10 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
 </div>
 
 <!-- ========================================================================= -->
-<!-- CHAPTER 8 CONTINUED: TEST CASES MATRIX                                    -->
+<!-- CHAPTER 9 CONTINUED: TEST CASES MATRIX (PAGE 2)                           -->
 <!-- ========================================================================= -->
 <div class="page">
-  <h2>8.5 Test Cases Specification Matrix</h2>
+  <h2>9.5 Test Cases Specification Matrix</h2>
   <div class="table-title">Table XI: System Test Cases and Verification Results Matrix</div>
   <table class="content-table">
     <thead>
@@ -1434,99 +1402,99 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
     <tbody>
       <tr>
         <td><strong>TC1</strong></td>
-        <td>Printed Prescription Parsing</td>
-        <td>High-res printed prescription containing 4 medicines.</td>
-        <td>All 4 drug names, strengths, and frequencies parsed accurately.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>User Registration & Password Salt Verification</td>
+        <td>POST <code>/api/auth/register</code> with valid email & password.</td>
+        <td>User created; password hashed with PBKDF2/SHA-256; plain password never stored.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC2</strong></td>
-        <td>Blurred / Skewed Image</td>
-        <td>Low-light, slightly skewed smartphone photograph.</td>
-        <td>Bilateral filter clarifies text; review interface allows correction.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Session Authentication & Cookie Security</td>
+        <td>POST <code>/api/auth/login</code> with registered credentials.</td>
+        <td>HTTP 200 OK; secure session cookie dispatched with HttpOnly flag.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC3</strong></td>
-        <td>Handwritten Prescription</td>
-        <td>Cursive handwriting with doctor shorthand notations.</td>
-        <td>OCR extracts shorthand; Gemini Vision fallback assists unreadable tokens.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Prescription Image Upload & Canvas Scaling</td>
+        <td>POST <code>/api/scan</code> with high-resolution image (3000x2000px).</td>
+        <td>Canvas downsampled to &le; 1200px; processed in &le; 0.28s; raw text extracted.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC4</strong></td>
-        <td>Fuzzy Typo Correction</td>
-        <td>Corrupted token: &ldquo;Metforrmin 500mg&rdquo;.</td>
-        <td>RapidFuzz matches to &ldquo;Metformin&rdquo; with 95% confidence score.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Doctor Shorthand Parsing (OD / BD / TDS)</td>
+        <td>Raw text: &ldquo;Tab Metformin 500mg BD x 30 days&rdquo;.</td>
+        <td>Name: Metformin; Strength: 500mg; Times: [08:00, 20:00]; Duration: 30 days.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC5</strong></td>
-        <td>Shorthand Expansion</td>
-        <td>Prescription contains &lsquo;1-0-1&rsquo; and &lsquo;TDS&rsquo;.</td>
-        <td>Converted into Morning/Evening and Morning/Afternoon/Night slots.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Fuzzy Matching for Misspelled OCR Drugs</td>
+        <td>Raw text: &ldquo;P@racetaml 500mg TDS&rdquo; (noisy OCR).</td>
+        <td>RapidFuzz corrects to &ldquo;Paracetamol&rdquo; (&ge; 88% confidence score).</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC6</strong></td>
-        <td>Human Review Gateway</td>
-        <td>User adjusts strength from 250mg to 500mg.</td>
-        <td>Modified values accurately persisted to database vault.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Human Verification Gateway Loop</td>
+        <td>Patient reviews extracted items; modifies frequency from OD to BD.</td>
+        <td>Updated dose slots saved to DB; original erroneous OCR discarded.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC7</strong></td>
-        <td>Web Push Dispatch</td>
-        <td>System clock reaches scheduled dose time (08:00).</td>
-        <td>Browser push notification appears with Take/Skip buttons.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Dose Logging & Adherence Score Update</td>
+        <td>POST <code>/api/medicines/take</code> for active scheduled dose.</td>
+        <td>State changes from Triggered to Taken; adherence percentage increments.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC8</strong></td>
-        <td>Reminder Snooze Action</td>
-        <td>User selects &ldquo;Snooze&rdquo; on active notification.</td>
-        <td>Reminder suppressed and re-triggered after 15-minute interval.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Multi-Select Batch Medication Deletion</td>
+        <td>Select 3 discontinued medicines; click Batch Delete.</td>
+        <td>Authenticated cascade delete removes 3 medicines and associated dose logs.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC9</strong></td>
-        <td>Tenancy Data Isolation</td>
-        <td>User A requests prescription ID belonging to User B.</td>
-        <td>HTTP 401/403 Forbidden returned; data access strictly denied.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>MediVoice Voice Command Processing</td>
+        <td>Vocalize &ldquo;What is my schedule?&rdquo; into active microphone.</td>
+        <td>Intent matched; upcoming daily doses synthesized and vocalized cleanly.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC10</strong></td>
-        <td>Invalid File Type Upload</td>
-        <td>User uploads an executable or non-image format (.exe, .pdf).</td>
-        <td>Request rejected with HTTP 400 and explicit user error toast.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Google Gemini AI Regimen Summary</td>
+        <td>GET <code>/api/medicines/summary</code> with active multi-drug regimen.</td>
+        <td>Gemini returns morning/evening slots, food-timing, and drug interaction alerts.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC11</strong></td>
-        <td>AI Meal-Timing Synthesis</td>
-        <td>User requests clinical summary with 4 active drugs.</td>
-        <td>Google Gemini synthesizes meal-time guidelines and warnings.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Web Push Notification Dispatch</td>
+        <td>Scheduled dose time reached; backend push daemon triggers.</td>
+        <td>Service Worker displays device push alert with Take/Snooze/Skip actions.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
       <tr>
         <td><strong>TC12</strong></td>
-        <td>Account Cascading Deletion</td>
-        <td>User triggers account deletion via settings.</td>
-        <td>User record, medicines, reminders, and dose logs permanently purged.</td>
-        <td><strong style="color: #16a34a;">PASS</strong></td>
+        <td>Right-to-be-Forgotten Account Deletion</td>
+        <td>POST <code>/api/auth/delete_account</code> with password verification.</td>
+        <td>User, prescriptions, medicines, logs, and push tokens purged; DPDP compliant.</td>
+        <td style="color: #16a34a; font-weight: bold;">PASS</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <!-- ========================================================================= -->
-<!-- CHAPTER 9: PROJECT TIMELINE & LIMITATIONS                                 -->
+<!-- CHAPTER 10: PROJECT TIMELINE & LIMITATIONS                                -->
 <!-- ========================================================================= -->
 <div class="page">
-  <h1>Chapter 9: Project Timeline & Limitations</h1>
+  <h1>Chapter 10: Project Timeline & Limitations</h1>
 
-  <h2>9.1 Academic Project Timeline</h2>
+  <h2>10.1 Academic Project Timeline</h2>
   <p>
     The minor project was executed across seven sequential phases within the prescribed 12-week academic semester curriculum:
   </p>
@@ -1574,25 +1542,25 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
       </tr>
       <tr>
         <td><strong>Phase 6</strong></td>
-        <td>Full system integration, 112 automated tests execution, and UI white/orange theme redesign.</td>
+        <td>Voice assistant integration (MediVoice), White & Orange theme overhaul, and batch deletion.</td>
         <td>Weeks 10 &ndash; 11</td>
         <td>Completed</td>
       </tr>
       <tr>
         <td><strong>Phase 7</strong></td>
-        <td>Final minor project documentation, experimental report compilation, and mentor review.</td>
+        <td>112-test automated verification suite execution, final report compilation, and mentor review.</td>
         <td>Week 12</td>
         <td>Completed</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>9.2 Current System Limitations</h2>
+  <h2>10.2 Current System Limitations</h2>
   <p>
     Notwithstanding the successful validation of the platform, several technical and environmental limitations are acknowledged:
   </p>
   <ul>
-    <li><strong>Handwriting Variability:</strong> Highly degraded, illegible cursive scripts produced by hurried clinicians can occasionally exceed the deciphering threshold of classical OCR engines, necessitating reliance on multimodal cloud vision or patient manual correction during human-in-the-loop review.</li>
+    <li><strong>Handwriting Variability:</strong> Highly degraded, illegible cursive scripts produced by hurried clinicians can occasionally exceed the deciphering threshold of classical OCR engines, necessitating reliance on patient manual correction during human-in-the-loop review.</li>
     <li><strong>Browser Notification Dependencies:</strong> Web Push notification reliability depends upon browser permissions granted by the patient and operating system battery-saver policies (particularly on aggressive mobile OS backgrounds).</li>
     <li><strong>Lexicon Coverage:</strong> The local fuzzy matching engine is pre-loaded with 113+ standardized clinical entities. While covering major chronic and acute drugs, highly specialized proprietary compounds may require manual entry.</li>
     <li><strong>Assistive Nature:</strong> MediAssist is engineered strictly as an educational and operational adherence tool. It does not replace the professional diagnosis, contraindication screening, or clinical judgment of a licensed healthcare provider.</li>
@@ -1600,12 +1568,12 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
 </div>
 
 <!-- ========================================================================= -->
-<!-- CHAPTER 10: FUTURE SCOPE & CONCLUSION                                     -->
+<!-- CHAPTER 11: FUTURE SCOPE & CONCLUSION                                     -->
 <!-- ========================================================================= -->
 <div class="page page-last">
-  <h1>Chapter 10: Future Scope & Conclusion</h1>
+  <h1>Chapter 11: Future Scope & Conclusion</h1>
 
-  <h2>10.1 Future Scope & Research Horizons</h2>
+  <h2>11.1 Future Scope & Research Horizons</h2>
   <p>
     The modular architecture of MediAssist provides a robust foundation for extensive future research and technological expansion:
   </p>
@@ -1617,18 +1585,18 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
     <li><strong>Real-Time Pharmacy Price Comparison:</strong> Expanding the procurement module to aggregate live medicine pricing and availability across multiple pharmacy APIs (Apollo, Pharmeasy, Netmeds, 1mg) to optimize patient costs.</li>
   </ul>
 
-  <h2>10.2 Conclusion</h2>
+  <h2>11.2 Conclusion</h2>
   <p>
     Medication non-adherence represents a multifaceted public health crisis that diminishes therapeutic outcomes and strains healthcare systems. <strong>MediAssist</strong> directly addresses this challenge by providing a smart, intuitive, and accessible bridge from paper prescriptions to structured daily adherence.
   </p>
   <p>
-    By synergistically harmonizing OpenCV image preprocessing, dual-engine OCR, NLP-based clinical shorthand parsing, Google Gemini generative synthesis, a secure personal vault, and Web Push notifications into a cohesive, responsive web platform, MediAssist transforms complex medical instructions into transparent, manageable daily habits. The mandatory human-in-the-loop review interface ensures clinical safety, while the DPDP Act 2023 compliance architecture guarantees uncompromising patient privacy.
+    By synergistically harmonizing OpenCV image preprocessing, dual-engine OCR, NLP-based clinical shorthand parsing, Google Gemini generative synthesis, MediVoice bidirectional voice interaction, a secure personal vault, and Web Push notifications into a cohesive, responsive web platform, MediAssist transforms complex medical instructions into transparent, manageable daily habits. The mandatory human-in-the-loop review interface ensures clinical safety, while the DPDP Act 2023 compliance architecture guarantees uncompromising patient privacy.
   </p>
   <p>
     With an automated verification scorecard of <strong>112 / 112 passed tests (100.0%, Grade A+)</strong>, sub-second processing latencies, and an elegant white and orange user interface, MediAssist demonstrates the practical feasibility of deploying accessible AI technologies to enhance self-care, empower chronic patients, and elevate modern medication adherence.
   </p>
 
-  <h1 style="margin-top: 25px;">References</h1>
+  <h1 style="margin-top: 18px;">References</h1>
   <ol style="font-size: 8.5pt; line-height: 1.45; padding-left: 20px;">
     <li>E. Sabat&eacute;, Ed., <em>Adherence to Long-Term Therapies: Evidence for Action</em>. Geneva, Switzerland: World Health Organization (WHO), 2003.</li>
     <li><em>The Digital Personal Data Protection Act, 2023</em>, Act No. 22 of 2023, Ministry of Law and Justice, Government of India, Aug. 2023.</li>
@@ -1639,7 +1607,7 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
     <li>Explosion AI, &ldquo;spaCy: Industrial-strength natural language processing in Python,&rdquo; 2023. [Online]. Available: https://spacy.io</li>
     <li>M. Bachmann, &ldquo;RapidFuzz: Rapid fuzzy string matching in Python and C++ using Levenshtein distance,&rdquo; GitHub repository, 2023. [Online]. Available: https://github.com/rapidfuzz/RapidFuzz</li>
     <li>W3C & MDN Web Docs, &ldquo;Push API: Providing push notification capabilities to web applications,&rdquo; Mozilla Developer Network, 2023. [Online]. Available: https://developer.mozilla.org/en-US/docs/Web/API/Push_API</li>
-    <li>W3C & MDN Web Docs, &ldquo;Geolocation API: Interfacing client geographical location,&rdquo; Mozilla Developer Network, 2023. [Online]. Available: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API</li>
+    <li>W3C & MDN Web Docs, &ldquo;Web Speech API: Speech recognition and synthesis,&rdquo; Mozilla Developer Network, 2024. [Online]. Available: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API</li>
     <li>OpenStreetMap Wiki, &ldquo;Overpass API: Read-only API that serves up custom selected parts of the OSM data,&rdquo; 2023. [Online]. Available: https://wiki.openstreetmap.org/wiki/Overpass_API</li>
     <li>V. Agafonkin, &ldquo;Leaflet: An open-source JavaScript library for mobile-friendly interactive maps,&rdquo; 2023. [Online]. Available: https://leafletjs.com</li>
     <li>P. P.-S. Chen, &ldquo;The entity-relationship model&mdash;Toward a unified view of data,&rdquo; <em>ACM Trans. Database Syst.</em>, vol. 1, no. 1, pp. 9&ndash;36, Mar. 1976.</li>
@@ -1655,12 +1623,13 @@ adaptive_bin = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_
 
 html_path = os.path.join(BASE_DIR, 'finalsubmission_report_sem1.html')
 pdf_path = os.path.join(BASE_DIR, 'finalsubmission report sem1.pdf')
-downloads_pdf_path = os.path.abspath(os.path.join(BASE_DIR, '..', 'finalsubmission report sem1.pdf'))
+workspace_pdf_path = os.path.abspath(os.path.join(BASE_DIR, '..', 'finalsubmission report sem1.pdf'))
+downloads_pdf_path = os.path.abspath(os.path.join(BASE_DIR, '..', '..', 'finalsubmission report sem1.pdf'))
 
 with open(html_path, 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print(f"Report HTML written to: {html_path} ({os.path.getsize(html_path)} bytes)")
+print(f"Report HTML written to: {html_path} ({os.path.getsize(html_path):,} bytes)")
 
 # Convert to PDF using Edge headless
 cmd = [
@@ -1680,9 +1649,10 @@ print(f"Edge exit code: {res.returncode}")
 if os.path.exists(pdf_path):
     size = os.path.getsize(pdf_path)
     print(f"Successfully generated PDF: {pdf_path} ({size:,} bytes)")
-    # Also copy to downloads directory
+    # Copy to both workspace root and user's Downloads folder
+    shutil.copyfile(pdf_path, workspace_pdf_path)
+    print(f"Copied to workspace location: {workspace_pdf_path} ({os.path.getsize(workspace_pdf_path):,} bytes)")
     shutil.copyfile(pdf_path, downloads_pdf_path)
-    print(f"Copied to downloads location: {downloads_pdf_path} ({os.path.getsize(downloads_pdf_path):,} bytes)")
+    print(f"Copied to user downloads location: {downloads_pdf_path} ({os.path.getsize(downloads_pdf_path):,} bytes)")
 else:
     print("ERROR: PDF was not generated!")
-

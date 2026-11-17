@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MediAssist UI Demonstration</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  body { background: var(--bg); color: var(--fg); padding-bottom: 60px; }
+  .view-container { max-width: 1100px; margin: 30px auto; padding: 20px 5vw; }
+</style>
+</head>
+<body>
+<nav>
+  <b>MediAssist</b>
+  <div style="display:flex;gap:14px;align-items:center">
+    <a href="#/dash" style="color:var(--fg);font-weight:600">Dashboard</a>
+    <button class="btn ghost sm">Log out</button>
+  </div>
+</nav>
+
+<main class="view-container">
+
+  <!-- ================= VIEW 1: DASHBOARD & DUAL SCANNER ================= -->
+  <div id="view-dashboard" style="margin-bottom: 50px;">
+    <h1>Your Medicines</h1>
+    <div class="card">
+      <h3 style="margin-top:0">Scan a prescription</h3>
+      <p style="color:var(--mut);font-size:14px;margin:0 0 14px">Upload a prescription photo from your gallery or capture one directly with your camera.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <label class="btn" style="cursor:pointer;margin:0;display:inline-flex;align-items:center;gap:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Choose from Gallery / Files
+        </label>
+        <label class="btn ghost" style="cursor:pointer;margin:0;display:inline-flex;align-items:center;gap:8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Take Photo with Camera
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 2: AI CLINICAL GUIDANCE ================= -->
+  <div id="view-ai" style="margin-bottom: 50px;">
+    <h2>AI Consumption & Timing Summary</h2>
+    <div class="card" id="ai-summary-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="badge" style="background:#c2410c;color:#fff;padding:4px 10px;font-size:12.5px;box-shadow:0 2px 6px rgba(194,65,12,0.3)">Google Gemini 1.5 Flash (Live AI)</span>
+          <button class="btn sm btn-voice" style="background:#0f172a;color:#fff;display:inline-flex;align-items:center;gap:6px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            🔊 Listen to Regimen
+          </button>
+        </div>
+        <button class="btn ghost sm">Refresh Summary</button>
+      </div>
+
+      <p style="font-size:15px;line-height:1.6;margin-bottom:16px">
+        <b>Regimen Overview:</b> You have 4 active medications coordinated for maximum therapeutic absorption and minimum gastrointestinal irritation. Pantoprazole is taken on an empty stomach first thing in the morning. Metformin is divided twice daily with meals. Atorvastatin is scheduled at bedtime for optimal nighttime cholesterol synthesis.
+      </p>
+
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
+        <div class="slot-card" style="border-left:4px solid #ea580c">
+          <b style="color:#ea580c;display:block;margin-bottom:6px">Morning (Breakfast / Empty Stomach)</b>
+          <div style="font-size:14px;margin-bottom:6px"><b>Pantoprazole 40mg</b> <span style="font-family:monospace;color:var(--mut)">(08:00)</span><br><span style="color:var(--mut);font-size:12px">Take 30 mins before food on empty stomach</span></div>
+          <div style="font-size:14px;margin-bottom:6px"><b>Metformin 500mg</b> <span style="font-family:monospace;color:var(--mut)">(08:30)</span><br><span style="color:var(--mut);font-size:12px">Take with or immediately after breakfast</span></div>
+        </div>
+        <div class="slot-card" style="border-left:4px solid #f97316">
+          <b style="color:#f97316;display:block;margin-bottom:6px">Afternoon (Lunch)</b>
+          <div style="font-size:14px;margin-bottom:6px"><b>Paracetamol 650mg</b> <span style="font-family:monospace;color:var(--mut)">(13:00)</span><br><span style="color:var(--mut);font-size:12px">Take after lunch only if headache or fever persists</span></div>
+        </div>
+        <div class="slot-card" style="border-left:4px solid #c2410c">
+          <b style="color:#c2410c;display:block;margin-bottom:6px">Evening (Dinner)</b>
+          <div style="font-size:14px;margin-bottom:6px"><b>Metformin 500mg</b> <span style="font-family:monospace;color:var(--mut)">(20:00)</span><br><span style="color:var(--mut);font-size:12px">Take with evening dinner</span></div>
+        </div>
+        <div class="slot-card" style="border-left:4px solid #18181b">
+          <b style="color:#18181b;display:block;margin-bottom:6px">Night (Bedtime)</b>
+          <div style="font-size:14px;margin-bottom:6px"><b>Atorvastatin 20mg</b> <span style="font-family:monospace;color:var(--mut)">(22:00)</span><br><span style="color:var(--mut);font-size:12px">Take at bedtime with water</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <b style="font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Doctor Instructions & Precautions</b>
+        <div style="margin-top:8px;display:grid;gap:8px">
+          <div style="padding:10px 12px;background:#f8fafc;border:1px solid var(--bd);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+            <b>Pantoprazole:</b> <span style="color:#ea580c;font-weight:600">Morning 08:00</span> - Swallow whole; do not crush or chew.
+          </div>
+          <div style="padding:10px 12px;background:#f8fafc;border:1px solid var(--bd);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+            <b>Metformin:</b> <span style="color:#ea580c;font-weight:600">With Meals (08:30 & 20:00)</span> - Maintain consistent hydration throughout the day.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 3: TIMELINE & CALENDAR ================= -->
+  <div id="view-timeline" style="margin-bottom: 50px;">
+    <h2>Timeline & History Calendar</h2>
+    <div class="card">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn ghost sm">&lt; Previous</button>
+        <input type="date" value="2026-11-17" style="width:auto;min-width:160px;padding:8px 12px">
+        <button class="btn ghost sm">Next &gt;</button>
+        <button class="btn sm">Today</button>
+      </div>
+
+      <div id="timeline-items">
+        <div class="timeline-item">
+          <div>
+            <span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">08:00 AM</span>
+            <b>Pantoprazole</b> <span style="color:var(--mut)">40mg</span>
+          </div>
+          <div><span class="badge taken">Taken</span></div>
+        </div>
+        <div class="timeline-item">
+          <div>
+            <span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">08:30 AM</span>
+            <b>Metformin</b> <span style="color:var(--mut)">500mg</span>
+          </div>
+          <div><span class="badge taken">Taken</span></div>
+        </div>
+        <div class="timeline-item">
+          <div>
+            <span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">01:00 PM</span>
+            <b>Paracetamol</b> <span style="color:var(--mut)">650mg</span>
+          </div>
+          <div><span class="badge skipped">Skipped</span></div>
+        </div>
+        <div class="timeline-item">
+          <div>
+            <span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">08:00 PM</span>
+            <b>Metformin</b> <span style="color:var(--mut)">500mg</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn sm">Take Dose</button>
+            <button class="btn ghost sm">Skip</button>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div>
+            <span class="badge" style="background:#18181b;color:#f4f4f5;margin-right:8px;font-family:monospace">10:00 PM</span>
+            <b>Atorvastatin</b> <span style="color:var(--mut)">20mg</span>
+          </div>
+          <div><span class="badge pending">Pending</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 4: SCHEDULE & BATCH DELETE ================= -->
+  <div id="view-schedule" style="margin-bottom: 50px;">
+    <h2>Schedule</h2>
+    <div id="batch-bar" style="display:flex;margin-bottom:12px;padding:10px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span style="font-weight:600;color:#dc2626">2 medicines selected</span>
+      <button class="btn danger sm">Delete Selected Medicines</button>
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center"><input type="checkbox" checked></th>
+            <th>Medicine</th>
+            <th>Frequency</th>
+            <th>Times</th>
+            <th>Duration</th>
+            <th>Buy Online</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:center"><input type="checkbox" checked></td>
+            <td><b>Pantoprazole</b> 40mg</td>
+            <td>OD</td>
+            <td>08:00</td>
+            <td>14 days</td>
+            <td><a href="https://www.1mg.com/search/all?name=Pantoprazole" target="_blank" style="color:#ea580c;font-weight:600">Tata 1mg &nearr;</a></td>
+            <td><button class="btn danger sm">Delete</button></td>
+          </tr>
+          <tr>
+            <td style="text-align:center"><input type="checkbox" checked></td>
+            <td><b>Metformin</b> 500mg</td>
+            <td>1-0-1</td>
+            <td>08:30, 20:00</td>
+            <td>30 days</td>
+            <td><a href="https://www.1mg.com/search/all?name=Metformin" target="_blank" style="color:#ea580c;font-weight:600">Tata 1mg &nearr;</a></td>
+            <td><button class="btn danger sm">Delete</button></td>
+          </tr>
+          <tr>
+            <td style="text-align:center"><input type="checkbox"></td>
+            <td><b>Atorvastatin</b> 20mg</td>
+            <td>HS</td>
+            <td>22:00</td>
+            <td>30 days</td>
+            <td><a href="https://www.1mg.com/search/all?name=Atorvastatin" target="_blank" style="color:#ea580c;font-weight:600">Tata 1mg &nearr;</a></td>
+            <td><button class="btn danger sm">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 5: MEDICINE LOCATOR & MAP ================= -->
+  <div id="view-locator" style="margin-bottom: 50px;">
+    <h2>Medicine Locator</h2>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+        <div>
+          <b>Find Nearby Pharmacies</b>
+          <p style="margin:2px 0 0;font-size:13.5px;color:var(--mut)">Search Google Maps or locate verified dispensaries around your area.</p>
+        </div>
+        <a class="btn" href="https://www.google.com/maps/search/pharmacy+near+me" target="_blank" style="display:inline-flex;align-items:center;gap:6px">
+          Open Google Maps &nearr;
+        </a>
+      </div>
+      <div id="map" style="background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-weight:500;border:1px solid var(--bd);height:260px">
+        <div style="text-align:center">
+          <span style="font-size:28px">📍</span><br>
+          Interactive Pharmacy Radar Map: Pitampura / Rohini, New Delhi<br>
+          <small style="color:var(--ac);font-weight:600">12 Verified Pharmacies in 3.5 km radius</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 6: VOICE ASSISTANT MODAL ================= -->
+  <div id="view-voice" style="position:relative;margin-bottom:50px">
+    <h2>MediAssist Voice Assistant Interface</h2>
+    <div class="card" style="max-width:500px;margin:auto;box-shadow:0 20px 40px -10px rgba(0,0,0,0.18);border:1px solid #cbd5e1">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">🎙️</span>
+          <div>
+            <h3 style="margin:0;font-size:17px;color:#09090b">MediAssist Voice Assistant</h3>
+            <small style="color:var(--mut)">Hands-free clinical voice controls</small>
+          </div>
+        </div>
+        <span class="badge" style="background:#16a34a;color:#fff;font-size:11px">Active Engine</span>
+      </div>
+
+      <div class="voice-wave" style="display:flex">
+        <div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div>
+      </div>
+
+      <div style="font-size:13.5px;color:#ea580c;text-align:center;margin:6px 0;font-weight:600">
+        ● Listening... Speak your medical command
+      </div>
+
+      <div style="min-height:50px;background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:12px;margin:10px 0;font-size:14px;color:#0f172a;line-height:1.5">
+        <b>You said:</b> &ldquo;What are my medicines today?&rdquo;
+      </div>
+
+      <div style="background:#fff7ed;border-left:4px solid #ea580c;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13.5px;color:#7c2d12;line-height:1.5">
+        <b>MediAssist:</b> &ldquo;You have 4 medications scheduled: Pantoprazole 40 milligrams once daily, Metformin 500 milligrams twice daily, and Atorvastatin 20 milligrams at bedtime.&rdquo;
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin:14px 0">
+        <button class="btn danger sm">🛑 Stop Listening</button>
+        <button class="btn ghost sm">⏹ Stop Voice</button>
+      </div>
+
+      <div style="font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Sample Voice Commands:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="cmd-pill">What are my medicines today?</span>
+        <span class="cmd-pill">Read AI clinical guidance</span>
+        <span class="cmd-pill">Mark Metformin as taken</span>
+        <span class="cmd-pill">Find nearby pharmacy</span>
+        <span class="cmd-pill">Scan prescription</span>
+      </div>
+
+      <form style="display:flex;gap:8px;margin-top:14px;width:100%">
+        <input placeholder="Or type a voice command..." style="flex:1;padding:8px 12px;font-size:13px;border:1px solid var(--bd);border-radius:8px" value="What are my medicines today?">
+        <button class="btn sm" type="button">Send</button>
+      </form>
+    </div>
+  </div>
+
+</main>
+
+<button id="voice-fab" title="Voice Assistant (Click to Speak)" aria-label="Open Voice Assistant">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+    <line x1="12" y1="19" x2="12" y2="23"></line>
+    <line x1="8" y1="23" x2="16" y2="23"></line>
+  </svg>
+</button>
+
+<footer>
+  <div class="footer-top">
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <a href="#/privacy">Privacy Policy</a>
+      <a href="#/terms">Terms</a>
+      <span>Assistive tool only. Not a substitute for a doctor or pharmacist.</span>
+    </div>
+  </div>
+  <div class="footer-credits">
+    <div class="mentor">
+      <span style="color:var(--mut)">Faculty Mentor:</span>
+      <strong>Cosmena Mahapatra</strong>
+    </div>
+    <div class="student">
+      <span style="color:var(--mut)">Made by:</span>
+      <strong style="color:var(--ac)">Haardik Goel</strong>
+      <span style="color:var(--mut)">(VIPS TC, MCA &bull; 09415504426)</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

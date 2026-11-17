@@ -72,28 +72,42 @@ const MediVoice = {
     return 'speechSynthesis' in window && window.speechSynthesis.speaking;
   },
 
-  startListening(cb = {}) {
-    if (!this.recognition) {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRec) {
-        try {
-          this.recognition = new SpeechRec();
-          this.recognition.continuous = false;
-          this.recognition.interimResults = true;
-          this.recognition.lang = 'en-IN';
-        } catch(e) {}
-      }
-    }
-    if (!this.recognition) {
-      if (cb.onError) cb.onError('Speech recognition is not supported in this browser. Try Chrome or Edge, or click the sample pills below.');
+  async startListening(cb = {}) {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      if (cb.onError) cb.onError('Speech recognition is not supported in this browser. You can type your command below or click a sample pill.');
       return;
     }
+
     this.stop();
+    this.stopListening();
+
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {});
+      }
+    } catch(e) {}
+
+    try {
+      this.recognition = new SpeechRec();
+      this.recognition.continuous = false;
+      this.recognition.interimResults = true;
+      this.recognition.lang = 'en-IN';
+    } catch(e) {
+      if (cb.onError) cb.onError('Microphone initialization failed: ' + e.message);
+      return;
+    }
+
     this.isListening = true;
     const fab = $('#voice-fab');
     if (fab) fab.classList.add('listening');
 
-    this.recognition.onstart = () => { if (cb.onStart) cb.onStart(); };
+    this.recognition.onstart = () => {
+      this.isListening = true;
+      if (cb.onStart) cb.onStart();
+    };
+
+    let processed = false;
     this.recognition.onresult = (e) => {
       let interim = '', final = '';
       for (let i = e.resultIndex; i < e.results.length; ++i) {
@@ -101,30 +115,46 @@ const MediVoice = {
         else interim += e.results[i][0].transcript;
       }
       if (cb.onTranscript) cb.onTranscript(final || interim, !!final);
-      if (final) this.processCommand(final.trim(), cb);
+      if (final && !processed) {
+        processed = true;
+        this.stopListening();
+        this.processCommand(final.trim(), cb);
+      }
     };
+
     this.recognition.onerror = (e) => {
       this.isListening = false;
       if (fab) fab.classList.remove('listening');
-      const msg = e.error === 'not-allowed' ? 'Microphone permission blocked. Please allow mic in browser settings.' : 'Voice recognition: ' + (e.error || 'try speaking again.');
+      let msg = 'Voice recognition error: ' + (e.error || 'try speaking again');
+      if (e.error === 'not-allowed') {
+        msg = 'Microphone permission blocked. Please enable microphone permissions in your browser address bar.';
+      } else if (e.error === 'no-speech') {
+        msg = 'No speech detected. Tap "Start Listening" and speak clearly.';
+      }
       if (cb.onError) cb.onError(msg);
     };
+
     this.recognition.onend = () => {
       this.isListening = false;
       if (fab) fab.classList.remove('listening');
       if (cb.onEnd) cb.onEnd();
     };
-    try { this.recognition.start(); } catch(e) {
+
+    try {
+      this.recognition.start();
+    } catch(err) {
       this.isListening = false;
       if (fab) fab.classList.remove('listening');
+      if (cb.onError) cb.onError('Could not start microphone: ' + err.message);
     }
   },
 
   stopListening() {
-    if (this.recognition && this.isListening) {
-      try { this.recognition.stop(); } catch(e) {}
-    }
     this.isListening = false;
+    if (this.recognition) {
+      try { this.recognition.abort(); } catch(e) {}
+      this.recognition = null;
+    }
     const fab = $('#voice-fab');
     if (fab) fab.classList.remove('listening');
   },
@@ -768,6 +798,11 @@ function openVoiceAssistant() {
         <span class="cmd-pill" data-cmd="Find pharmacy">Find pharmacies</span>
         <span class="cmd-pill" data-cmd="Go to dashboard">Go to dashboard</span>
       </div>
+
+      <form id="voice-text-form" style="display:flex;gap:8px;margin-top:12px;width:100%">
+        <input id="voice-text-input" placeholder="Or type a command (e.g. 'Read schedule')..." style="flex:1;padding:8px 12px;font-size:13.5px;border:1px solid var(--bd);border-radius:8px">
+        <button class="btn sm" type="submit">Send</button>
+      </form>
     </div>
   `;
   document.body.appendChild(modal);
@@ -779,6 +814,8 @@ function openVoiceAssistant() {
   const status = $('#voice-status', modal);
   const transcriptBox = $('#voice-transcript-box', modal);
   const replyBox = $('#voice-reply-box', modal);
+  const textForm = $('#voice-text-form', modal);
+  const textInput = $('#voice-text-input', modal);
 
   closeBtn.onclick = () => {
     MediVoice.stopListening();
@@ -855,7 +892,23 @@ function openVoiceAssistant() {
     };
   });
 
-  micToggle.click();
+  if (textForm) {
+    textForm.onsubmit = (e) => {
+      e.preventDefault();
+      const val = textInput.value.trim();
+      if (!val) return;
+      textInput.value = '';
+      transcriptBox.innerHTML = `<b>Typed Command:</b> "${esc(val)}"`;
+      status.textContent = 'Processing command...';
+      MediVoice.processCommand(val, {
+        onReply: (r, willSpeak) => {
+          replyBox.style.display = 'block';
+          replyBox.innerHTML = `<b>MediAssist:</b> ${esc(r)}`;
+          if (willSpeak) stopSpeech.style.display = 'inline-block';
+        }
+      });
+    };
+  }
 }
 
 async function boot(){
