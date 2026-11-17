@@ -359,13 +359,45 @@ tr:hover {
 }
 
 footer {
-    padding: 40px 5vw;
+    padding: 30px 5vw;
     border-top: 1px solid var(--bd);
     color: var(--mut);
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 16px;
     background: #f8fafc
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    border-bottom: 1px solid var(--bd);
+    padding-bottom: 14px
+}
+
+.footer-credits {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13.5px;
+    color: var(--fg)
+}
+
+.footer-credits .mentor,
+.footer-credits .student {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap
+}
+
+.footer-credits strong {
+    color: #09090b
 }
 
 .doc h2 {

@@ -1,8 +1,8 @@
 """
 Script to generate the comprehensive, official Minor Project Final Report (Semester 1)
 Title: MediAssist: Smart Prescription Scanner and Medicine Reminder System
-Author: Haardik Goel (09417704426), MCA 1 (B)
-Mentor: Dr. Cosmina, VSIT, VIPS-TC, GGSIPU Delhi
+Author: Haardik Goel (09415504426), MCA 1 (B)
+Mentor: Dr. Cosmena Mahapatra, VSIT, VIPS-TC, GGSIPU Delhi
 """
 
 import os
@@ -391,7 +391,7 @@ html_content = f"""<!DOCTYPE html>
       <td style="width: 50%;">
         <div class="meta-title">Submitted To:</div>
         <div class="meta-val" style="margin-top: 4px;">
-          <strong>Dr. Cosmina</strong><br>
+          <strong>Dr. Cosmena Mahapatra</strong><br>
           Project Mentor & Assistant Professor<br>
           VSIT, VIPS-TC, Delhi
         </div>
@@ -400,7 +400,7 @@ html_content = f"""<!DOCTYPE html>
         <div class="meta-title" style="text-align: right;">Submitted By:</div>
         <div class="meta-val" style="margin-top: 4px;">
           <strong>Haardik Goel</strong><br>
-          Enrollment No.: <strong>09417704426</strong><br>
+          Enrollment No.: <strong>09415504426</strong><br>
           MCA 1 (B)<br>
           VIPS-TC, Delhi
         </div>
@@ -426,7 +426,7 @@ html_content = f"""<!DOCTYPE html>
   <h1>Certificate of Approval</h1>
 
   <p>
-    This is to certify that the minor project report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong> submitted by <strong>Haardik Goel</strong> (Enrollment No. <strong>09417704426</strong>), student of Master of Computer Applications, <strong>MCA 1 (B)</strong>, at Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC, affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of the candidate's own work carried out under my direct supervision and academic mentorship during Semester 1.
+    This is to certify that the minor project report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong> submitted by <strong>Haardik Goel</strong> (Enrollment No. <strong>09415504426</strong>), student of Master of Computer Applications, <strong>MCA 1 (B)</strong>, at Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC, affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of the candidate's own work carried out under my direct supervision and academic mentorship during Semester 1.
   </p>
 
   <p>
@@ -440,7 +440,7 @@ html_content = f"""<!DOCTYPE html>
   <div class="sign-container" style="margin-top: 70px;">
     <div class="sign-box">
       <div class="sign-line">
-        <strong>Dr. Cosmina</strong><br>
+        <strong>Dr. Cosmena Mahapatra</strong><br>
         Project Mentor & Assistant Professor<br>
         VSIT, VIPS-TC, Delhi
       </div>
@@ -467,7 +467,7 @@ html_content = f"""<!DOCTYPE html>
   <h1>Declaration of Originality</h1>
 
   <p>
-    I, <strong>Haardik Goel</strong>, a student of <strong>Master of Computer Applications, MCA 1 (B)</strong>, Enrollment Number <strong>09417704426</strong>, hereby declare that the minor project final report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong>, submitted to Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC (VIPS-TC), affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of my original research, design, and software implementation carried out under the esteemed guidance of my mentor, <strong>Dr. Cosmina</strong>.
+    I, <strong>Haardik Goel</strong>, a student of <strong>Master of Computer Applications, MCA 1 (B)</strong>, Enrollment Number <strong>09415504426</strong>, hereby declare that the minor project final report entitled <strong>&ldquo;MediAssist: Smart Prescription Scanner and Medicine Reminder System&rdquo;</strong>, submitted to Vivekananda School of Information Technology (VSIT), Vivekananda Institute of Professional Studies-TC (VIPS-TC), affiliated to Guru Gobind Singh Indraprastha University (GGSIPU), Delhi, is an authentic record of my original research, design, and software implementation carried out under the esteemed guidance of my mentor, <strong>Dr. Cosmena Mahapatra</strong>.
   </p>
 
   <p>
@@ -482,7 +482,7 @@ html_content = f"""<!DOCTYPE html>
     <div class="sign-box" style="text-align: right;">
       <div class="sign-line" style="text-align: right;">
         <strong>Haardik Goel</strong><br>
-        Enrollment No.: 09417704426<br>
+        Enrollment No.: 09415504426<br>
         MCA 1 (B), VSIT, VIPS-TC
       </div>
     </div>
@@ -491,7 +491,7 @@ html_content = f"""<!DOCTYPE html>
   <h1 style="margin-top: 35px;">Acknowledgement</h1>
 
   <p>
-    I express my profound gratitude and sincere respect to my project mentor, <strong>Dr. Cosmina</strong>, for her exceptional guidance, invaluable technical insights, and consistent encouragement throughout the conceptualization, development, and testing phases of the <strong>MediAssist</strong> project. Her rigorous feedback on system architecture, clinical parsing rules, and error mitigation strategies has been instrumental in the successful completion of this system.
+    I express my profound gratitude and sincere respect to my project mentor, <strong>Dr. Cosmena Mahapatra</strong>, for her exceptional guidance, invaluable technical insights, and consistent encouragement throughout the conceptualization, development, and testing phases of the <strong>MediAssist</strong> project. Her rigorous feedback on system architecture, clinical parsing rules, and error mitigation strategies has been instrumental in the successful completion of this system.
   </p>
 
   <p>
@@ -504,7 +504,7 @@ html_content = f"""<!DOCTYPE html>
 
   <div style="text-align: right; margin-top: 20px;">
     <strong>Haardik Goel</strong><br>
-    MCA 1 (B), Roll No. 09417704426
+    MCA 1 (B), Roll No. 09415504426
   </div>
 </div>
 
@@ -1685,3 +1685,4 @@ if os.path.exists(pdf_path):
     print(f"Copied to downloads location: {downloads_pdf_path} ({os.path.getsize(downloads_pdf_path):,} bytes)")
 else:
     print("ERROR: PDF was not generated!")
+
