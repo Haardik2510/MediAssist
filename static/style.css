@@ -475,3 +475,109 @@ footer {
     margin-top: 10px;
     box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.05)
 }
+
+/* Voice Integration Styles */
+#voice-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ac);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 8px 24px -2px rgba(234, 88, 12, 0.5), 0 4px 8px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 25;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+#voice-fab:hover {
+    transform: scale(1.08);
+    background: #c2410c;
+    box-shadow: 0 12px 28px -2px rgba(234, 88, 12, 0.65), 0 6px 12px -1px rgba(0, 0, 0, 0.15);
+}
+
+#voice-fab:active {
+    transform: scale(0.96);
+}
+
+#voice-fab.listening {
+    background: #dc2626;
+    animation: voiceRipple 1.4s infinite ease-out;
+}
+
+@keyframes voiceRipple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6), 0 8px 24px rgba(220, 38, 38, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 16px rgba(220, 38, 38, 0), 0 8px 24px rgba(220, 38, 38, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0), 0 8px 24px rgba(220, 38, 38, 0.4);
+    }
+}
+
+.voice-wave {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 36px;
+    margin: 12px 0;
+}
+
+.voice-wave .vbar {
+    width: 4px;
+    height: 10px;
+    background: var(--ac);
+    border-radius: 4px;
+    animation: waveBounce 1s ease-in-out infinite alternate;
+}
+
+.voice-wave .vbar:nth-child(2) { animation-delay: 0.15s; }
+.voice-wave .vbar:nth-child(3) { animation-delay: 0.3s; }
+.voice-wave .vbar:nth-child(4) { animation-delay: 0.45s; }
+.voice-wave .vbar:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes waveBounce {
+    0% { height: 8px; }
+    100% { height: 32px; background: #c2410c; }
+}
+
+.cmd-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #f1f5f9;
+    border: 1px solid var(--bd);
+    border-radius: 14px;
+    font-size: 12px;
+    color: #334155;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+
+.cmd-pill:hover {
+    background: #fff7ed;
+    border-color: #ea580c;
+    color: #c2410c;
+}
+
+.btn-voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.btn-voice.speaking {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    animation: voiceRipple 1.6s infinite ease-out;
+}

@@ -1,7 +1,209 @@
 const $=(s,r=document)=>r.querySelector(s),app=$('#app');let user=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const api=async(p,o={})=>{const h={'X-Requested-With':'fetch'};let b=o.body;if(b&&!(b instanceof FormData)){h['Content-Type']='application/json';b=JSON.stringify(b)}
  try{const r=await fetch('/api'+p,{method:o.method||(b?'POST':'GET'),headers:h,body:b});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Something went wrong. Try again.');return d}
  catch(e){if(e instanceof TypeError)throw new Error('Network error. Check your connection.');throw e}};
+
+// ── Voice Integration Engine (MediVoice) ────────────────────────────────────
+const MediVoice = {
+  recognition: null,
+  isListening: false,
+  muted: false,
+  cachedVoices: [],
+
+  init() {
+    if ('speechSynthesis' in window) {
+      const load = () => { this.cachedVoices = window.speechSynthesis.getVoices() || []; };
+      load();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) window.speechSynthesis.onvoiceschanged = load;
+    }
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRec) {
+      try {
+        this.recognition = new SpeechRec();
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.lang = 'en-IN';
+      } catch(e) { this.recognition = null; }
+    }
+  },
+
+  cleanForSpeech(text) {
+    if (!text) return '';
+    return text
+      .replace(/\b1-0-1\b/g, 'one tablet in morning and one at night')
+      .replace(/\b1-0-0\b/g, 'one tablet in morning')
+      .replace(/\b0-0-1\b/g, 'one tablet at night')
+      .replace(/\b1-1-1\b/g, 'one tablet morning, afternoon, and night')
+      .replace(/\bOD\b/g, 'once daily')
+      .replace(/\bBD\b|\bBID\b/g, 'twice daily')
+      .replace(/\bTDS\b|\bTID\b/g, 'three times daily')
+      .replace(/\bQID\b/g, 'four times daily')
+      .replace(/\bHS\b/g, 'at bedtime')
+      .replace(/\bmg\b/gi, 'milligrams')
+      .replace(/\bml\b/gi, 'milliliters')
+      .replace(/[*#_~]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  speak(text, opts = {}) {
+    if (!('speechSynthesis' in window) || this.muted) return;
+    this.stop();
+    const clean = this.cleanForSpeech(text);
+    if (!clean) return;
+    const u = new SpeechSynthesisUtterance(clean);
+    u.rate = opts.rate || 0.95;
+    u.pitch = opts.pitch || 1.0;
+    const voices = this.cachedVoices.length ? this.cachedVoices : (window.speechSynthesis.getVoices() || []);
+    const bestVoice = voices.find(v => v.lang === 'en-IN') || voices.find(v => v.lang.startsWith('en')) || voices[0];
+    if (bestVoice) u.voice = bestVoice;
+    if (opts.onStart) u.onstart = opts.onStart;
+    u.onend = () => { if (opts.onEnd) opts.onEnd(); };
+    u.onerror = () => { if (opts.onEnd) opts.onEnd(); };
+    try { window.speechSynthesis.speak(u); } catch(e) {}
+  },
+
+  stop() {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  },
+
+  isSpeaking() {
+    return 'speechSynthesis' in window && window.speechSynthesis.speaking;
+  },
+
+  startListening(cb = {}) {
+    if (!this.recognition) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        try {
+          this.recognition = new SpeechRec();
+          this.recognition.continuous = false;
+          this.recognition.interimResults = true;
+          this.recognition.lang = 'en-IN';
+        } catch(e) {}
+      }
+    }
+    if (!this.recognition) {
+      if (cb.onError) cb.onError('Speech recognition is not supported in this browser. Try Chrome or Edge, or click the sample pills below.');
+      return;
+    }
+    this.stop();
+    this.isListening = true;
+    const fab = $('#voice-fab');
+    if (fab) fab.classList.add('listening');
+
+    this.recognition.onstart = () => { if (cb.onStart) cb.onStart(); };
+    this.recognition.onresult = (e) => {
+      let interim = '', final = '';
+      for (let i = e.resultIndex; i < e.results.length; ++i) {
+        if (e.results[i].isFinal) final += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      if (cb.onTranscript) cb.onTranscript(final || interim, !!final);
+      if (final) this.processCommand(final.trim(), cb);
+    };
+    this.recognition.onerror = (e) => {
+      this.isListening = false;
+      if (fab) fab.classList.remove('listening');
+      const msg = e.error === 'not-allowed' ? 'Microphone permission blocked. Please allow mic in browser settings.' : 'Voice recognition: ' + (e.error || 'try speaking again.');
+      if (cb.onError) cb.onError(msg);
+    };
+    this.recognition.onend = () => {
+      this.isListening = false;
+      if (fab) fab.classList.remove('listening');
+      if (cb.onEnd) cb.onEnd();
+    };
+    try { this.recognition.start(); } catch(e) {
+      this.isListening = false;
+      if (fab) fab.classList.remove('listening');
+    }
+  },
+
+  stopListening() {
+    if (this.recognition && this.isListening) {
+      try { this.recognition.stop(); } catch(e) {}
+    }
+    this.isListening = false;
+    const fab = $('#voice-fab');
+    if (fab) fab.classList.remove('listening');
+  },
+
+  async processCommand(transcript, cb = {}) {
+    const raw = transcript.toLowerCase();
+    let reply = '';
+
+    if (raw.includes('taken') || raw.includes('took') || raw.includes('take dose') || raw.includes('log dose')) {
+      try {
+        const dueList = await api('/reminders/due').catch(() => []);
+        if (dueList && dueList.length) {
+          let target = dueList[0];
+          for (const d of dueList) {
+            if (raw.includes(d.name.toLowerCase())) { target = d; break; }
+          }
+          await api('/doses/' + target.id, { body: { status: 'taken' } });
+          reply = `Logged your ${target.name} dose as taken. Excellent adherence!`;
+          const cal = $('#cal-date');
+          if (cal && typeof loadTimeline === 'function') loadTimeline(cal.value);
+        } else {
+          reply = 'I checked your schedule, but there are no pending doses waiting to be taken right now.';
+        }
+      } catch(e) { reply = 'Could not update dose: ' + e.message; }
+    } else if (raw.includes('skip')) {
+      try {
+        const dueList = await api('/reminders/due').catch(() => []);
+        if (dueList && dueList.length) {
+          let target = dueList[0];
+          for (const d of dueList) {
+            if (raw.includes(d.name.toLowerCase())) { target = d; break; }
+          }
+          await api('/doses/' + target.id, { body: { status: 'skipped' } });
+          reply = `Marked your ${target.name} dose as skipped.`;
+          const cal = $('#cal-date');
+          if (cal && typeof loadTimeline === 'function') loadTimeline(cal.value);
+        } else {
+          reply = 'There are no pending doses to skip right now.';
+        }
+      } catch(e) { reply = 'Error skipping dose: ' + e.message; }
+    } else if (raw.includes('medicine') || raw.includes('schedule') || raw.includes('what are my') || raw.includes('routine')) {
+      try {
+        const meds = await api('/medicines').catch(() => []);
+        if (meds && meds.length) {
+          const list = meds.map(m => `${m.name} ${m.strength || ''}, ${m.frequency || ''}`).join('. ');
+          reply = `You have ${meds.length} active medications scheduled: ${list}.`;
+        } else {
+          reply = 'You do not have any active medicines registered yet. Scan or upload a prescription to get started.';
+        }
+      } catch(e) { reply = 'Could not retrieve medicines: ' + e.message; }
+    } else if (raw.includes('guidance') || raw.includes('summary') || raw.includes('ai') || raw.includes('how to take') || raw.includes('advice')) {
+      if (window._lastSummaryText) {
+        reply = window._lastSummaryText;
+      } else {
+        try {
+          const s = await api('/medicines/summary');
+          reply = s.summary || 'No active summary available.';
+        } catch(e) { reply = 'Could not load clinical guidance: ' + e.message; }
+      }
+    } else if (raw.includes('pharmacy') || raw.includes('chemist') || raw.includes('store') || raw.includes('buy') || raw.includes('1mg')) {
+      const loc = $('#map') || $('section:has(#map)');
+      if (loc) loc.scrollIntoView({ behavior: 'smooth' });
+      reply = 'Opened the Medicine Locator. You can order online via Tata 1mg or explore nearby pharmacies on Google Maps.';
+    } else if (raw.includes('dashboard') || raw.includes('home') || raw.includes('scan') || raw.includes('upload')) {
+      location.hash = '#/dash';
+      reply = 'Navigated to your dashboard. You can upload or scan a prescription here.';
+    } else if (raw.includes('stop') || raw.includes('quiet') || raw.includes('silence') || raw.includes('mute')) {
+      this.stop();
+      if (cb.onReply) cb.onReply('Audio playback stopped.', false);
+      return;
+    } else {
+      reply = `I heard: "${transcript}". You can ask: "What are my medicines today?", "Mark Metformin as taken", "Read AI guidance", or "Find pharmacies".`;
+    }
+
+    if (cb.onReply) cb.onReply(reply, true);
+    this.speak(reply);
+  }
+};
+MediVoice.init();
 // analytics + error tracking (client): privacy-friendly, only if configured
 fetch('/config.json').then(r=>r.ok?r.json():{}).then(c=>{if(c.plausible){const s=document.createElement('script');s.defer=1;s.dataset.domain=c.plausible;s.src='https://plausible.io/js/script.js';document.head.append(s)}}).catch(()=>{});
 addEventListener('error',e=>navigator.sendBeacon&&navigator.sendBeacon('/api/log',JSON.stringify({m:e.message})));
@@ -71,8 +273,11 @@ const routes={
 
   <h2>AI Consumption & Timing Summary</h2>
   <div class=card id=ai-summary-box>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span class="badge" id=ai-badge style="background:#ea580c;color:#fff;box-shadow:0 2px 6px rgba(234,88,12,0.3)">AI Clinical Guidance</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="badge" id=ai-badge style="background:#ea580c;color:#fff;box-shadow:0 2px 6px rgba(234,88,12,0.3)">AI Clinical Guidance</span>
+        <button class="btn sm btn-voice" id=btn-voice-summary style="display:none;background:#0f172a;color:#fff">🔊 Listen to Regimen</button>
+      </div>
       <button class="btn ghost sm" id=btn-reload-summary>Refresh Summary</button>
     </div>
     <div id=ai-summary-body><span class=spin></span> Analyzing your medications and consumption timing...</div>
@@ -257,12 +462,37 @@ const routes={
       const data=await api('/medicines/summary');
       if(!data.total_medications){
         box.innerHTML='<p class="empty" style="padding:16px">No active medicines scheduled. Scan or enter a prescription to see smart consumption instructions.</p>';
+        const vb=$('#btn-voice-summary');if(vb)vb.style.display='none';
         return;
       }
       const badge=$('#ai-badge');
       if(badge&&data.source&&data.source.includes('Gemini')){
         badge.textContent='Google Gemini 1.5 Flash (Live AI)';
         badge.style.background='#c2410c';
+      }
+      window._lastSummaryText = data.summary || '';
+      if(data.guidelines && data.guidelines.length){
+        window._lastSummaryText += '. Doctor Instructions: ' + data.guidelines.map(g=>`${g.medicine}, ${g.timing}: ${g.instructions}`).join('. ');
+      }
+      const vBtn=$('#btn-voice-summary');
+      if(vBtn){
+        vBtn.style.display='inline-flex';
+        vBtn.onclick=()=>{
+          if(MediVoice.isSpeaking()){
+            MediVoice.stop();
+            vBtn.innerHTML='🔊 Listen to Regimen';
+            vBtn.classList.remove('speaking');
+          }else{
+            vBtn.innerHTML='⏹ Stop Audio';
+            vBtn.classList.add('speaking');
+            MediVoice.speak(window._lastSummaryText, {
+              onEnd:()=>{
+                vBtn.innerHTML='🔊 Listen to Regimen';
+                vBtn.classList.remove('speaking');
+              }
+            });
+          }
+        };
       }
       let html=`<p style="font-size:15px;line-height:1.6;margin-bottom:14px"><b>Regimen Overview:</b> ${esc(data.summary)}</p>`;
       const slots=data.slots||{};
@@ -299,7 +529,6 @@ const routes={
   if(!user.onboarded)onboard();remind()},
  privacy:()=>doc('Privacy Policy',['What we collect','Your email, hashed password, uploaded prescription text and your medicine schedule. Images are processed in memory and not stored.','How we use it','Only to run your account, scan prescriptions and send reminders. We do not sell data.','Your rights','You can delete your account and all associated data at any time from the dashboard.','Contact','Add your contact email here before launch.']),
  terms:()=>doc('Terms of Service',['Assistive tool','MediAssist helps you organise medicines. It is not medical advice and does not replace a doctor or pharmacist.','Accuracy','OCR can be wrong. You must confirm every medicine and dose before saving.','Use','Do not misuse the service. We may suspend abusive accounts.','Liability','The service is provided as is. Have these terms reviewed by a lawyer before launch.'])};
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const doc=(t,p)=>{app.innerHTML=`<section class=doc><h1>${t}</h1>${p.map((x,i)=>i%2?`<p>${x}</p>`:`<h2>${x}</h2>`).join('')}</section>`};
 async function compressImage(file, maxDim = 1200) {
   return new Promise((resolve) => {
@@ -490,7 +719,163 @@ async function nearby(){
 function onboard(){const st=['Scan a prescription photo.','Confirm the medicines it found.','Allow notifications to get reminders.'];let i=0;const d=document.createElement('div');d.className='modal';
  const r=()=>{d.innerHTML=`<div class=card><small>Step ${i+1} of 3</small><h2>${st[i]}</h2><button class=btn id=nx>${i<2?'Next':'Finish'}</button></div>`;$('#nx',d).onclick=async()=>{if(++i>2){await api('/onboarded',{method:'POST',body:{}});d.remove();user.onboarded=1;Notification?.requestPermission?.()}else r()}};r();document.body.append(d)}
 let rt;function remind(){clearInterval(rt);const tick=async()=>{try{for(const x of await api('/reminders/due')){if(Notification.permission==='granted'){new Notification('Time for '+x.name,{body:'Open MediAssist to log this dose.'})}
+ if(!window._lastSpokenDose||window._lastSpokenDose!==x.id){window._lastSpokenDose=x.id;MediVoice.speak('Reminder: Time for your '+x.name+' dose.')}
  if(!$('#r'+x.id)){app.insertAdjacentHTML('afterbegin',`<div class=card id=r${x.id} style="margin:16px 5vw">${esc(x.name)} due ${x.due.slice(11)} <button class=btn data-a=taken>Taken</button> <button class="btn ghost" data-a=snooze>Snooze 10m</button> <button class="btn ghost" data-a=skipped>Skip</button></div>`);$('#r'+x.id).onclick=async e=>{const a=e.target.dataset.a;if(a){await api('/doses/'+x.id,{body:{status:a}});$('#r'+x.id).remove()}}}}}catch{}};tick();rt=setInterval(tick,30000)}
-async function boot(){try{user=(await api('/me')).user;if(user)localStorage.setItem('ma_auth','1');else localStorage.removeItem('ma_auth')}catch{user=null}nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
-async function route(){const[,p,a]=location.hash.split('/');scrollTo(0,0);if(!user&&localStorage.getItem('ma_auth')==='1'){try{user=(await api('/me')).user}catch{user=null}}(routes[p||'']||(()=>app.innerHTML='<section><h1>404</h1><a href=/>Home</a></section>'))(a);nav();const lo=$('#lo');if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'}}
+
+function openVoiceAssistant() {
+  let modal = $('#voice-modal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'voice-modal';
+  modal.innerHTML = `
+    <div class="card" style="max-width:480px;width:100%;position:relative;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">🎙️</span>
+          <div>
+            <h3 style="margin:0;font-size:17px;color:#09090b">MediAssist Voice Assistant</h3>
+            <small style="color:var(--mut)">Hands-free clinical voice controls</small>
+          </div>
+        </div>
+        <button class="btn ghost sm" id="voice-close-btn" style="padding:4px 10px;font-size:16px">&times;</button>
+      </div>
+
+      <div class="voice-wave" id="voice-wave" style="display:none">
+        <div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div>
+      </div>
+
+      <div id="voice-status" style="font-size:13.5px;color:var(--mut);text-align:center;margin:6px 0;font-weight:500">
+        Click "Start Listening" or pick a sample command below.
+      </div>
+
+      <div id="voice-transcript-box" style="min-height:54px;background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:12px;margin:10px 0;font-size:14px;color:#0f172a;line-height:1.5">
+        <i style="color:var(--mut)">Speak naturally: "What are my medicines today?", "Mark Metformin as taken", or "Read AI guidance"...</i>
+      </div>
+
+      <div id="voice-reply-box" style="display:none;background:#fff7ed;border-left:4px solid #ea580c;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13.5px;color:#7c2d12;line-height:1.5"></div>
+
+      <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin:14px 0;flex-wrap:wrap">
+        <button class="btn" id="voice-mic-toggle">🎙️ Start Listening</button>
+        <button class="btn ghost" id="voice-stop-speech" style="display:none">⏹ Stop Voice</button>
+      </div>
+
+      <div style="font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Try Saying / Quick Commands:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px" id="voice-pill-container">
+        <span class="cmd-pill" data-cmd="What are my medicines today?">What are my medicines today?</span>
+        <span class="cmd-pill" data-cmd="Read AI clinical guidance">Read AI guidance</span>
+        <span class="cmd-pill" data-cmd="I took my medicine">Mark dose as taken</span>
+        <span class="cmd-pill" data-cmd="Find pharmacy">Find pharmacies</span>
+        <span class="cmd-pill" data-cmd="Go to dashboard">Go to dashboard</span>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const closeBtn = $('#voice-close-btn', modal);
+  const micToggle = $('#voice-mic-toggle', modal);
+  const stopSpeech = $('#voice-stop-speech', modal);
+  const wave = $('#voice-wave', modal);
+  const status = $('#voice-status', modal);
+  const transcriptBox = $('#voice-transcript-box', modal);
+  const replyBox = $('#voice-reply-box', modal);
+
+  closeBtn.onclick = () => {
+    MediVoice.stopListening();
+    MediVoice.stop();
+    modal.remove();
+  };
+
+  micToggle.onclick = () => {
+    if (MediVoice.isListening) {
+      MediVoice.stopListening();
+      micToggle.textContent = '🎙️ Start Listening';
+      micToggle.classList.remove('danger');
+      wave.style.display = 'none';
+      status.textContent = 'Stopped listening.';
+    } else {
+      replyBox.style.display = 'none';
+      transcriptBox.innerHTML = '<i style="color:var(--mut)">Listening... please speak clearly into your microphone...</i>';
+      status.textContent = 'Listening for your voice command...';
+      wave.style.display = 'flex';
+      micToggle.textContent = '🛑 Stop Listening';
+      micToggle.classList.add('danger');
+
+      MediVoice.startListening({
+        onStart: () => {
+          status.textContent = 'Listening... Speak your command.';
+          wave.style.display = 'flex';
+        },
+        onTranscript: (t, isFinal) => {
+          transcriptBox.innerHTML = `<b>You said:</b> "${esc(t)}"`;
+          if (isFinal) {
+            status.textContent = 'Processing command...';
+            wave.style.display = 'none';
+            micToggle.textContent = '🎙️ Start Listening';
+            micToggle.classList.remove('danger');
+          }
+        },
+        onReply: (r, willSpeak) => {
+          replyBox.style.display = 'block';
+          replyBox.innerHTML = `<b>MediAssist:</b> ${esc(r)}`;
+          if (willSpeak) stopSpeech.style.display = 'inline-block';
+        },
+        onError: (err) => {
+          wave.style.display = 'none';
+          status.textContent = err;
+          micToggle.textContent = '🎙️ Start Listening';
+          micToggle.classList.remove('danger');
+        },
+        onEnd: () => {
+          wave.style.display = 'none';
+          micToggle.textContent = '🎙️ Start Listening';
+          micToggle.classList.remove('danger');
+        }
+      });
+    }
+  };
+
+  stopSpeech.onclick = () => {
+    MediVoice.stop();
+    stopSpeech.style.display = 'none';
+  };
+
+  modal.querySelectorAll('.cmd-pill').forEach(pill => {
+    pill.onclick = () => {
+      const cmd = pill.dataset.cmd;
+      transcriptBox.innerHTML = `<b>Command:</b> "${esc(cmd)}"`;
+      status.textContent = 'Processing command...';
+      MediVoice.processCommand(cmd, {
+        onReply: (r, willSpeak) => {
+          replyBox.style.display = 'block';
+          replyBox.innerHTML = `<b>MediAssist:</b> ${esc(r)}`;
+          if (willSpeak) stopSpeech.style.display = 'inline-block';
+        }
+      });
+    };
+  });
+
+  micToggle.click();
+}
+
+async function boot(){
+  try{user=(await api('/me')).user;if(user)localStorage.setItem('ma_auth','1');else localStorage.removeItem('ma_auth')}catch{user=null}
+  nav();
+  const lo=$('#lo');
+  if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'};
+  const fab=$('#voice-fab');
+  if(fab)fab.onclick=openVoiceAssistant;
+}
+async function route(){
+  MediVoice.stop();
+  const[,p,a]=location.hash.split('/');
+  scrollTo(0,0);
+  if(!user&&localStorage.getItem('ma_auth')==='1'){try{user=(await api('/me')).user}catch{user=null}}
+  (routes[p||'']||(()=>app.innerHTML='<section><h1>404</h1><a href=/>Home</a></section>'))(a);
+  nav();
+  const lo=$('#lo');
+  if(lo)lo.onclick=async()=>{localStorage.removeItem('ma_auth');await api('/logout',{method:'POST',body:{}});user=null;nav();location.hash='#/'};
+  const fab=$('#voice-fab');
+  if(fab)fab.onclick=openVoiceAssistant;
+}
 addEventListener('hashchange',route);boot().then(route);
