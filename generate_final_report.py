@@ -497,11 +497,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="sign-sub">Place: New Delhi</div>
       <div class="sign-sub">Academic Session: 2026 &ndash; 2027</div>
     </div>
-    <div class="sign-box" style="text-align: right;">
-      <div class="sign-line" style="text-align: right;">Prof. (Dr.) Supriya Madan</div>
-      <div class="sign-sub">Dean, VSIT</div>
-      <div class="sign-sub">VIPS-TC, GGSIPU Delhi</div>
-    </div>
+    
   </div>
 </div>
 
